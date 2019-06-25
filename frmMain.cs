@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+// VB版の移植するもの
 namespace GetParameterCS
 {
     public partial class FrmMain : Form
@@ -21,5 +22,6 @@ namespace GetParameterCS
         {
 
         }
+
     }
 }
