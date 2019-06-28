@@ -22,6 +22,17 @@ namespace GetParameterCS
         {
 
         }
+        private void DebugMethod()
+        {
+            string csvPath = AppDomain.CurrentDomain.BaseDirectory + "\\" + "Default.csv";
+            string gifPath = AppDomain.CurrentDomain.BaseDirectory + "\\" + "Facerig.gif";
+            ClsReadParameter clsRead = new ClsReadParameter(gifPath, csvPath);
+            Console.WriteLine(clsRead.Duration);
+        }
 
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            DebugMethod();
+        }
     }
 }
