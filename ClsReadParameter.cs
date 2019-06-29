@@ -1,18 +1,13 @@
-﻿
-
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
 using System.IO;
-using Microsoft.VisualBasic;
-using System.Threading.Tasks;
 
 namespace GetParameterCS
 {
-
+    /// <summary>
+    /// パラメータを読み取り格納するクラス
+    /// </summary>
     class ClsReadParameter
     {
         private enum Csv
@@ -25,13 +20,19 @@ namespace GetParameterCS
         }
         private double Fps { get;  }
         private string Gif { get;  }
-        private readonly List<string> ids;
-        private readonly List<string> mins;
-        private readonly List<string> maxs;
+        public readonly List<string> ids;
+        private readonly List<double> mins;
+        private readonly List<double> maxs;
         private readonly List<Point> poses;
-        private readonly List<Dictionary<double, double>> dicTimeVal;
+        public readonly List<Dictionary<double, double>> dicTimeVal;
         public double Duration { get; set; }
-        public double AllValCnt { get; set; }
+        public long AllValCnt { get; set; }
+
+        public int GetCount()
+        {
+            return ids.Count;
+        }
+
         public ClsReadParameter(string gifPath, string csvPath, double strfps)
         {
             Fps = strfps;
@@ -49,13 +50,15 @@ namespace GetParameterCS
             dicTimeVal = SetVals();
         }
 
-        private (List<string> Ids, List<string> Min, List<string> Max) AddPosMinMax(string csvpath)
+        private (List<string> Ids, List<double> Min, List<double> Max) AddPosMinMax(string csvpath)
         {
             string[] fields;
             string line;
             List<string> ids = new List<string>();
-            List<string> min = new List<string>();
-            List<string> max = new List<string>();
+            List<double> min = new List<double>();
+            List<double> max = new List<double>();
+            string strmin;
+            string strmax;
 
             StreamReader sr = new StreamReader(csvpath);
             {
@@ -64,22 +67,28 @@ namespace GetParameterCS
                     line = sr.ReadLine();
                     fields = line.Split(',');
                     ids.Add(fields[(int)Csv.Id]);
-                    min.Add(fields[(int)Csv.Min]);
-                    max.Add(fields[(int)Csv.Max]);
+                    strmin = fields[(int)Csv.Min];
+                    strmax = fields[(int)Csv.Max];
+                    min.Add(int.Parse(strmin));
+                    max.Add(int.Parse(strmax));
                 }
 
                 return (ids, min, max);
             }
         }
 
+        /// <summary>
+        /// ID別の位置リスト
+        /// </summary>
+        /// <param name="swPoint">縦の個数</param>
+        /// <returns></returns>
         private List<Point> SetPos(int swPoint = 10)
         {
             List<Point> pos = new List<Point>();
             
             Image image = Image.FromFile(Gif);
-            double gifheight = (double)image.Height;
-            Double sq = gifheight / swPoint;
-            List<Point> point = new List<Point>();
+            double gifheight = image.Height;
+            double sq = gifheight / swPoint;
             int i, row, col;
 
             // 左上が起点として高さのswPoint割り
@@ -97,6 +106,10 @@ namespace GetParameterCS
             return pos;
         }
 
+        /// <summary>
+        /// 時刻とパラメータ量の辞書をIDごとにリスト化して格納
+        /// </summary>
+        /// <returns>辞書(時刻、パラメータ量)のリスト</returns>
         private List<Dictionary<double, double>> SetVals()
         {
             List<Dictionary<double, double>> listval = new List<Dictionary<double, double>>();
@@ -105,7 +118,7 @@ namespace GetParameterCS
             int frameCnt = image.GetFrameCount(fd);
             Duration = FtoTime(frameCnt - 1);
             Color gifColor;
-            double preval = 0,compareval = 0;
+            double preval = 0;
             for  (int framei  = 0; framei < ids.Count; framei++){
 
                 listval.Add(new Dictionary<double, double>());
@@ -116,11 +129,12 @@ namespace GetParameterCS
                 Bitmap bitmap = (Bitmap)image;
                 for (int idInd = 0; idInd < ids.Count; idInd++)
                 {
+                    double compareval;
                     gifColor = bitmap.GetPixel(poses[idInd].X, poses[idInd].Y);
-                    compareval = 1.0 - gifColor.GetBrightness();
+                    compareval = ChgVal(1.0 - gifColor.GetBrightness(),mins[idInd],maxs[idInd]);
                     if (frameInd == 0 || preval != compareval || frameInd == (ids.Count-1))
                     {
-                        listval[idInd].Add(FtoTime(frameInd),compareval);
+                        listval[idInd].Add(FtoTime(frameInd), compareval);
                     }
                     preval = compareval;
                 }
@@ -140,6 +154,11 @@ namespace GetParameterCS
             return (distance * value) + min;
         }
 
+        /// <summary>
+        /// フレーム数を時間に変換する
+        /// </summary>
+        /// <param name="flame">何フレーム目か</param>
+        /// <returns>1フレームの時間はFpsの逆</returns>
         private double FtoTime(int flame)
         {
             double ans = (1.0 / Fps) * flame;

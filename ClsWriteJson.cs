@@ -10,24 +10,30 @@ namespace GetParameterCS
 
         private Live2dJson live2d;
         public ClsWriteJson(
-                   Double Duration ,
-                   Double Fps,
-                   int CurveCount ,
+                   double Duration ,
+                   double Fps,
+                   long CurveCount ,
                    bool @loop  = true,
                    bool AreBeziersRestricted  = true,
                    int UserDataCount  = 0,
                    int TotalUserDataSize  = 0)
         {
-            live2d = new Live2dJson();
-            live2d.Meta.Add("Duration", Duration);
-            live2d.Meta.Add("Fps", Fps);
-            live2d.Meta.Add("Loop", @loop);
-            live2d.Meta.Add("AreBeziersRestricted", AreBeziersRestricted);
-            live2d.Meta.Add("CurveCount", CurveCount);
-            live2d.Meta.Add("TotalSegmentCount", 0);
-            live2d.Meta.Add("TotalPointCount", 0);
-            live2d.Meta.Add("UserDataCount", UserDataCount);
-            live2d.Meta.Add("TotalUserDataSize", TotalUserDataSize);
+            live2d = new Live2dJson
+            {
+                Curves = new List<CurvePoint>(),
+                Meta = new Dictionary<string, object>
+            {
+                { "Duration", Calc(Duration) },
+                { "Fps", Fps },
+                { "Loop", @loop },
+                { "AreBeziersRestricted", AreBeziersRestricted },
+                { "CurveCount", CurveCount },
+                { "TotalSegmentCount", 0 },
+                { "TotalPointCount", 0 },
+                { "UserDataCount", UserDataCount },
+                { "TotalUserDataSize", TotalUserDataSize }
+            }
+            };
         }
 
         public void WriteJson(string jsonName)
@@ -45,24 +51,26 @@ namespace GetParameterCS
                 string printline;
                 foreach (string str in line)
                 {
-                    printline = str.Replace("  ", "\r\n");
+                    printline = str.Replace("0.0,", "0,");
                     sw.WriteLine(printline);
+                    
                 }
                 sw.Close();
             }
         }
 
-        private void AddPoint(string id, List<double> keys , List<double> value)
+        public void AddPoint(string id, List<double> keys, List<double> value)
         {
             CurvePoint newSeg = new CurvePoint
             {
-                Id = id
+                Id = id,
+                Segments = new List<double>()
             };
             for (int i = 0; i < keys.Count; i++)
             {
-                newSeg.Segments.Add(keys[i]);
+                newSeg.Segments.Add(Calc(keys[i]));
                 live2d.Meta["TotalPointCount"] = (int)live2d.Meta["TotalPointCount"] + 1;
-                newSeg.Segments.Add(value[i]);
+                newSeg.Segments.Add(Calc(value[i]));
                 live2d.Meta["TotalPointCount"] = (int)live2d.Meta["TotalPointCount"] + 1;
 
                 if (i != (keys.Count - 1))
@@ -75,12 +83,17 @@ namespace GetParameterCS
             live2d.Curves.Add(newSeg);
 
         }
+        private double Calc(double num)
+        {
+            return Math.Truncate(num * 100.0) / 100.0;
+        }
     }
     
 
+
     class Live2dJson
     {
-        public int Version = 3;
+        public double Version = 3.0;
         public Dictionary<string, object> Meta { get; set; }
         public List<CurvePoint> Curves { get; set; }
     }
