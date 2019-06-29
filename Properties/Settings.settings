@@ -1,7 +1,126 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="GetParameterCS.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="ID_1" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamAngleX,-30,30</Value>
+    </Setting>
+    <Setting Name="ID_2" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamAngleY,-30,30</Value>
+    </Setting>
+    <Setting Name="ID_3" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamAngleZ,-30,30</Value>
+    </Setting>
+    <Setting Name="ID_4" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamEyeLOpen,0,1</Value>
+    </Setting>
+    <Setting Name="ID_5" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamEyeLSmile,0,1</Value>
+    </Setting>
+    <Setting Name="ID_6" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamEyeROpen,0,1</Value>
+    </Setting>
+    <Setting Name="ID_7" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamEyeRSmile,0,1</Value>
+    </Setting>
+    <Setting Name="ID_8" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamEyeBallX,-1,1</Value>
+    </Setting>
+    <Setting Name="ID_9" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamEyeBallY,-1,1</Value>
+    </Setting>
+    <Setting Name="ID_10" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamEyeBallForm,-1,1</Value>
+    </Setting>
+    <Setting Name="ID_11" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamBrowLY,-1,1</Value>
+    </Setting>
+    <Setting Name="ID_12" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamBrowRY,-1,1</Value>
+    </Setting>
+    <Setting Name="ID_13" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamBrowLX,-1,1</Value>
+    </Setting>
+    <Setting Name="ID_14" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamBrowRX,-1,1</Value>
+    </Setting>
+    <Setting Name="ID_15" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamBrowLAngle,-1,1</Value>
+    </Setting>
+    <Setting Name="ID_16" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamBrowRAngle,-1,1</Value>
+    </Setting>
+    <Setting Name="ID_17" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamBrowLForm,-1,1</Value>
+    </Setting>
+    <Setting Name="ID_18" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamBrowRForm,-1,1</Value>
+    </Setting>
+    <Setting Name="ID_19" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamMouthForm,-1,1</Value>
+    </Setting>
+    <Setting Name="ID_20" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamMouthOpenY,0,1</Value>
+    </Setting>
+    <Setting Name="ID_21" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamCheek,0,1</Value>
+    </Setting>
+    <Setting Name="ID_22" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamBodyAngleX,-10,10</Value>
+    </Setting>
+    <Setting Name="ID_23" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamBodyAngleY,-10,10</Value>
+    </Setting>
+    <Setting Name="ID_24" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamBodyAngleZ,-10,10</Value>
+    </Setting>
+    <Setting Name="ID_25" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamBreath,0,1</Value>
+    </Setting>
+    <Setting Name="ID_26" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamArmLA,-10,10</Value>
+    </Setting>
+    <Setting Name="ID_27" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamArmRA,-10,10</Value>
+    </Setting>
+    <Setting Name="ID_28" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamArmLB,-10,10</Value>
+    </Setting>
+    <Setting Name="ID_29" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamArmRB,-10,10</Value>
+    </Setting>
+    <Setting Name="ID_30" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamHandL,-1,1</Value>
+    </Setting>
+    <Setting Name="ID_31" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamHandR,-1,1</Value>
+    </Setting>
+    <Setting Name="ID_32" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamHairFront,-1,1</Value>
+    </Setting>
+    <Setting Name="ID_33" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamHairSide,-1,1</Value>
+    </Setting>
+    <Setting Name="ID_34" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamHairBack,-1,1</Value>
+    </Setting>
+    <Setting Name="ID_35" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamHairFluffy,0,1</Value>
+    </Setting>
+    <Setting Name="ID_36" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamShoulderY,0,10</Value>
+    </Setting>
+    <Setting Name="ID_37" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamBustX,-1,1</Value>
+    </Setting>
+    <Setting Name="ID_38" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamBustY,-1,1</Value>
+    </Setting>
+    <Setting Name="ID_39" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamBaseX,-10,10</Value>
+    </Setting>
+    <Setting Name="ID_40" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ParamBaseY,-10,10</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

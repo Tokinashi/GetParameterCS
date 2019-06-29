@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 
 namespace GetParameterCS
 {
@@ -27,13 +29,14 @@ namespace GetParameterCS
         public readonly List<Dictionary<double, double>> dicTimeVal;
         public double Duration { get; set; }
         public long AllValCnt { get; set; }
+        private readonly List<Idproperty> Idprop;
 
         public int GetCount()
         {
             return ids.Count;
         }
 
-        public ClsReadParameter(string gifPath, string csvPath, double strfps)
+        public ClsReadParameter(string gifPath, string csvPath, double strfps = 30.0)
         {
             Fps = strfps;
             Gif = gifPath;
@@ -41,13 +44,80 @@ namespace GetParameterCS
             poses = SetPos(10);
             dicTimeVal = SetVals();
         }
-        public ClsReadParameter(string gifPath, string csvPath)
+        //public ClsReadParameter(string gifPath, string csvPath)
+        //{
+        //    Fps = 30.0;
+        //    Gif = gifPath;
+        //    (ids, mins, maxs) = AddPosMinMax(csvPath);
+        //    poses = SetPos(10);
+        //    dicTimeVal = SetVals();
+        //}
+        public ClsReadParameter(Image gif, string rectangle)
         {
             Fps = 30.0;
-            Gif = gifPath;
-            (ids, mins, maxs) = AddPosMinMax(csvPath);
-            poses = SetPos(10);
-            dicTimeVal = SetVals();
+            Idprop = Idproperties(rectangle);
+            SetVals(gif, Idprop);
+        }
+        public int Count()
+        {
+            return Idprop.Count;
+        }
+        private void SetVals(Image gif,List<Idproperty> idproperties)
+        {
+            FrameDimension fd = new FrameDimension(gif.FrameDimensionsList[0]);
+            int frameCnt = gif.GetFrameCount(fd);
+            Duration = FtoTime(frameCnt - 1);
+            AllValCnt = 0;
+            for (int frameInd = 0; frameInd < frameCnt; frameInd++)
+            {
+                gif.SelectActiveFrame(fd, frameInd);
+                Bitmap bitmap = (Bitmap)gif;
+                for (int idInd = 0; idInd < idproperties.Count; idInd++)
+                {
+                    Point idPoint = idproperties[idInd].point;
+                    Color gifColor = bitmap.GetPixel(idPoint.X, idPoint.Y);
+                    var tv = idproperties[idInd].timeVal;
+                    double compareval = ChgVal(1.0 - gifColor.GetBrightness(), mins[idInd], maxs[idInd]);
+                    if (frameInd == 0 || tv.Last().Value != compareval || frameInd == (ids.Count - 1))
+                    {
+                        tv.Add(FtoTime(frameInd), compareval);
+                        AllValCnt++;
+                    }
+                }
+            }
+        }
+
+        private List<Idproperty> Idproperties(string rectangle,int rowCnt = 10)
+        {
+            string[] rect = rectangle.Split(',');
+            Point MD = new Point(int.Parse(rect[0]), int.Parse(rect[1]));
+            Point MU = new Point(int.Parse(rect[2]), int.Parse(rect[3]));
+            int mHeight = Math.Abs(MD.Y - MU.Y);
+            int sq = mHeight / rowCnt;
+
+            var idProp = new List<Idproperty>();
+            int i = 0;
+            int row = 1;
+            int col = 1;
+            foreach (System.Configuration.SettingsProperty item in Properties.Settings.Default.Properties)
+            {
+                string valueName = item.Name;
+                string value = Properties.Settings.Default[valueName].ToString();
+                string[] values = value.Split(',');
+                string id = values[0];
+                int min = int.Parse(values[1]);
+                int max = int.Parse(values[2]);
+                if (row == 10)
+                {
+                    row = 1;
+                    col++;
+                }
+                Point point = new Point(MD.X + (col * sq) - (sq / 2), MD.Y + (row * sq) - (sq / 2));
+                idProp.Add(new Idproperty(id, point, min, max, new Dictionary<double, double>()));
+                i++;
+                row++;
+            }
+            return idProp;
         }
 
         private (List<string> Ids, List<double> Min, List<double> Max) AddPosMinMax(string csvpath)
@@ -163,6 +233,23 @@ namespace GetParameterCS
         {
             double ans = (1.0 / Fps) * flame;
             return ans;
+        }
+        private class Idproperty
+        {
+            private string id;
+            public Point point;
+            private double min;
+            private double max;
+            public Dictionary<double, double> timeVal;
+
+            public Idproperty(string id, Point point, double min, double max, Dictionary<double, double> timeVal)
+            {
+                this.id = id;
+                this.point = point;
+                this.min = min;
+                this.max = max;
+                this.timeVal = timeVal;
+            }
         }
     }
 

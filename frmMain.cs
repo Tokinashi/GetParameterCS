@@ -17,11 +17,13 @@ namespace GetParameterCS
         Image image;
         int showRow;
         bool view = false;
+        string ExePath;
 
         private void DebugMethod()
         {
-            string csvPath = AppDomain.CurrentDomain.BaseDirectory + "\\" + "Default.csv";
-            string gifPath = AppDomain.CurrentDomain.BaseDirectory + "\\" + "Facerig.gif";
+            ExePath = AppDomain.CurrentDomain.BaseDirectory + "\\";
+            string csvPath = ExePath + "Default.csv";
+            string gifPath = ExePath + "Facerig.gif";
             MakePara(gifPath, csvPath, 30);
 
         }
@@ -99,7 +101,14 @@ namespace GetParameterCS
             }
             else if (dgvFiles.Columns[e.ColumnIndex].Name == "DgvBtnSave")
             {
+                string filePath = dgvFiles.Rows[e.RowIndex].Cells["DgvFilePath"].Value.ToString();
+                saveFileDialog1.FileName = Path.GetFileNameWithoutExtension(filePath) + ".motion3.json";
+                //saveFileDialog1.InitialDirectory = ExePath;
+                saveFileDialog1.Title = "保存先のファイルを選択してください";
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
 
+                }
             }
             else
             {
@@ -110,13 +119,13 @@ namespace GetParameterCS
         }
         private void AdddgvRow(string fileName)
         {
-            dgvFiles.Rows.Add(Path.GetFileName(fileName),"未変換","保存","×", fileName, "");
+            dgvFiles.Rows.Add(Path.GetFileName(fileName), "未変換", "保存", "×", fileName, "");
             dgvFiles.CurrentCell = dgvFiles.Rows[dgvFiles.Rows.Count - 1].Cells[0];
-            ShowGif(fileName,dgvFiles.Rows.Count-1);
+            ShowGif(fileName, dgvFiles.Rows.Count - 1);
 
         }
 
-        private bool ShowGif(string gif,int row = 1)
+        private bool ShowGif(string gif, int row = 1)
         {
             try
             {
@@ -174,6 +183,9 @@ namespace GetParameterCS
             view = false;
 
             //dgvFilesに記録
+            string strPoints = "(" + MD.X.ToString() + "," + MD.Y.ToString() + ") / (" + MU.X.ToString() + "," + MU.Y.ToString() + ")";
+            dgvFiles.Rows[showRow].Cells["DgvStatus"].Value = strPoints;
+            dgvFiles.Rows[showRow].Cells["DgvPoints"].Value = strPoints.Replace("(","").Replace(")","").Replace("/",",");
         }
 
         private void PictureBox1_MouseMove(object sender, MouseEventArgs e)
