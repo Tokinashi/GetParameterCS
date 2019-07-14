@@ -19,14 +19,14 @@ namespace GetParameterCS
         bool view = false;
         string ExePath;
 
-        private void DebugMethod()
-        {
-            ExePath = AppDomain.CurrentDomain.BaseDirectory + "\\";
-            string csvPath = ExePath + "Default.csv";
-            string gifPath = ExePath + "Facerig.gif";
-            MakePara(gifPath, csvPath, 30);
+        //private void DebugMethod()
+        //{
+        //    ExePath = AppDomain.CurrentDomain.BaseDirectory + "\\";
+        //    string csvPath = ExePath + "Default.csv";
+        //    string gifPath = ExePath + "Facerig.gif";
+        //    MakePara(gifPath, csvPath, 30);
 
-        }
+        //}
 
         public FrmMain()
         {
@@ -36,28 +36,113 @@ namespace GetParameterCS
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            ExePath = AppDomain.CurrentDomain.BaseDirectory + "\\";
+            saveFileDialog1.InitialDirectory = ExePath;
+            saveFileDialog1.Filter = "モーション設定ファイル(*.motion3.json)|*.motion3.json";
+            saveFileDialog1.Title = "保存先のファイルを選択してください";
         }
         private void Button1_Click(object sender, EventArgs e)
         {
-            DebugMethod();
+            //DebugMethod();
         }
 
-        private void MakePara(string gif,string csv,double fps = 30.0)
+        private void Pointtest(string rectangle,int rowCnt = 10)
         {
 
-            ClsReadParameter clsRead = new ClsReadParameter(gif, csv, fps);
-            ClsWriteJson writeJson = new ClsWriteJson(clsRead.Duration, fps, clsRead.AllValCnt);
-            List<string> Ids = clsRead.ids;
-            for (int i = 0; i < clsRead.GetCount(); i++)
+            string[] rect = rectangle.Split(',');
+            Point MD = new Point(int.Parse(rect[0]), int.Parse(rect[1]));
+            Point MU = new Point(int.Parse(rect[2]), int.Parse(rect[3]));
+            int mHeight = Math.Abs(MD.Y - MU.Y);
+            int sq = mHeight / rowCnt;
+
+            int i = 0;
+            int row = 1;
+            int col = 1;
+            for (int j = 1; j <= Properties.Settings.Default.Properties.Count; j++)
             {
-                Dictionary<double, double> aVal= clsRead.dicTimeVal[i];
-                writeJson.AddPoint(Ids[i], aVal.Keys.ToList(), aVal.Values.ToList());
+                string value = Properties.Settings.Default["ID_" + j].ToString();
+                string[] values = value.Split(',');
+                string id = values[0];
+                int min = int.Parse(values[1]);
+                int max = int.Parse(values[2]);
+                if (row == 11)
+                {
+                    row = 1;
+                    col++;
+                }
+                Point point = new Point(MD.X + (col * sq) - (sq / 2), MD.Y + (row * sq) - (sq / 2));
+
+                using (Graphics g = Graphics.FromImage(image))
+                {
+                    //Penオブジェクトの作成(幅3黒色)
+                    Pen p = new Pen(Color.Red, 1);
+                    //(10, 20)-(100, 200)に線を引く
+                    g.DrawLine(p, point.X - 5, point.Y - 5, point.X + 5, point.Y + 5);
+                    g.DrawLine(p, point.X + 5, point.Y - 5, point.X - 5, point.Y + 5);
+
+                    //リソースを解放する
+                    p.Dispose();
+                    g.Dispose();
+                }
+                //PictureBox1に表示する
+                pictureBox1.Image = image;
+
+                i++;
+                row++;
             }
-            writeJson.WriteJson(Path.GetFileNameWithoutExtension(gif));
+            Application.DoEvents();
+            //foreach (System.Configuration.SettingsProperty item in Properties.Settings.Default.Properties)
+            //{
+
+
+            //    string valueName = item.Name;
+            //    string value = Properties.Settings.Default[valueName].ToString();
+            //    string[] values = value.Split(',');
+            //    string id = values[0];
+            //    int min = int.Parse(values[1]);
+            //    int max = int.Parse(values[2]);
+            //    if (row == 11)
+            //    {
+            //        row = 1;
+            //        col++;
+            //    }
+            //    Point point = new Point(MD.X + (col * sq) - (sq / 2), MD.Y + (row * sq) - (sq / 2));
+
+            //    Graphics g = Graphics.FromImage(image);
+            //    //Penオブジェクトの作成(幅3黒色)
+            //    Pen p = new Pen(Color.Black, 3);
+            //    //(10, 20)-(100, 200)に線を引く
+            //    g.DrawLine(p, 10, 20, 100, 200);
+
+            //    //リソースを解放する
+            //    p.Dispose();
+            //    g.Dispose();
+            //    //PictureBox1に表示する
+            //    pictureBox1.Image = image;
+
+            //    i++;
+            //    row++;
+            //}
+        }
+
+
+        private void MakePara(string gif, string rectangle, double fps = 30.0)
+        {
+            //Pointtest(rectangle);
+
+
+            ClsReadParameter clsRead = new ClsReadParameter(Image.FromFile(gif), rectangle, fps);
+            ClsWriteJson writeJson = new ClsWriteJson(clsRead.Duration, fps, clsRead.AllValCnt);
+            for (int i = 0; i < clsRead.Count(); i++)
+            {
+                Dictionary<double, double> aVal= clsRead.DicTimeVal(i);
+                writeJson.AddPoint(clsRead.Ids(i), aVal.Keys.ToList(), aVal.Values.ToList());
+            }
+            writeJson.WriteJson(saveFileDialog1.FileName);
             Console.WriteLine("出力");
             //lblStatus.Text = "完了";
         }
+        
 
         private void FrmMain_DragEnter(object sender, DragEventArgs e)
         {
@@ -95,19 +180,42 @@ namespace GetParameterCS
 
         private void DataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            // 削除　基本カレントセルは上に。
             if (dgvFiles.Columns[e.ColumnIndex].Name == "DgvBtnDel")
             {
                 dgvFiles.Rows.RemoveAt(e.RowIndex);
+                // 一番上だった場合
+                if (e.RowIndex == 0)
+                {   
+                    /// もうデータがない場合
+                    if (dgvFiles.Rows.Count == 0)
+                    {
+                        pictureBox1.Visible = false;
+                        lblCaption.Text = "ファイルをドラッグ＆ドロップ";
+                    }
+                    /// 下のデータが上に繰り上がるのでそちらをカレントセルにする
+                    else { dgvFiles.CurrentCell = dgvFiles.Rows[0].Cells[0]; }
+
+                }
+                else
+                {
+                dgvFiles.CurrentCell = dgvFiles.Rows[e.RowIndex-1].Cells[0];
+
+                }
             }
             else if (dgvFiles.Columns[e.ColumnIndex].Name == "DgvBtnSave")
             {
                 string filePath = dgvFiles.Rows[e.RowIndex].Cells["DgvFilePath"].Value.ToString();
-                saveFileDialog1.FileName = Path.GetFileNameWithoutExtension(filePath) + ".motion3.json";
-                //saveFileDialog1.InitialDirectory = ExePath;
-                saveFileDialog1.Title = "保存先のファイルを選択してください";
+                string rectAngle = dgvFiles.Rows[e.RowIndex].Cells["DgvPoints"].Value.ToString();
+                if (rectAngle == "")
+                {
+                    return;
+                }
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
-
+                    MakePara(filePath, rectAngle);
+                    dgvFiles.Rows[showRow].Cells["DgvStatus"].Value = "変換・保存済み";
+                    
                 }
             }
             else
@@ -129,6 +237,7 @@ namespace GetParameterCS
         {
             try
             {
+                if (pictureBox1.Visible == false) { pictureBox1.Visible = true; }
                 image = Image.FromFile(gif);
                 bmp = new Bitmap(image.Width, image.Height);
                 using (Graphics g = Graphics.FromImage(bmp))
@@ -138,6 +247,8 @@ namespace GetParameterCS
                 }
                 pictureBox1.Image = bmp;
                 showRow = row;
+                lblCaption.Text = dgvFiles.Rows[row].Cells["DgvFileName"].Value.ToString();
+                
                 //bmp = new Bitmap(image.Width, image.Height);
             }
             catch (Exception e)

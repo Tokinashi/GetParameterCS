@@ -36,7 +36,7 @@ namespace GetParameterCS
             };
         }
 
-        public void WriteJson(string jsonName)
+        public void WriteJson(string jsonPath)
         {
             JsonSerializerSettings settings = new JsonSerializerSettings
             {
@@ -44,7 +44,7 @@ namespace GetParameterCS
             };
             string output = JsonConvert.SerializeObject(live2d, settings);
             output = output.Replace("  ", "\t");
-            using (StreamWriter sw = new System.IO.StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "\\" + jsonName + ".motion3.json"))
+            using (StreamWriter sw = new System.IO.StreamWriter(jsonPath))
             {
                 string[] rn = { "\r\n" };
                 string[] line = output.Split(rn,StringSplitOptions.None);
