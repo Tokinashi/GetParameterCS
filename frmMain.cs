@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.IO;
 using System.Drawing;
+using System.Data;
 using System.Drawing.Imaging;
 
 // VB版の移植するもの
@@ -40,7 +41,17 @@ namespace GetParameterCS
             saveFileDialog1.InitialDirectory = ExePath;
             saveFileDialog1.Filter = "モーション設定ファイル(*.motion3.json)|*.motion3.json";
             saveFileDialog1.Title = "保存先のファイルを選択してください";
+            DataGridViewCell cell = new DataGridViewTextBoxCell();
+            var DtColumn = new DataGridViewColumn
+            {
+                Visible = false,
+                Name = "DgvDtSetID",
+                CellTemplate = cell
+            };
+            dgvFiles.Columns.Add(DtColumn);
+
         }
+        
         private void Button1_Click(object sender, EventArgs e)
         {
             //DebugMethod();
@@ -60,11 +71,6 @@ namespace GetParameterCS
             int col = 1;
             for (int j = 1; j <= Properties.Settings.Default.Properties.Count; j++)
             {
-                string value = Properties.Settings.Default["ID_" + j].ToString();
-                string[] values = value.Split(',');
-                string id = values[0];
-                int min = int.Parse(values[1]);
-                int max = int.Parse(values[2]);
                 if (row == 11)
                 {
                     row = 1;
@@ -91,38 +97,6 @@ namespace GetParameterCS
                 row++;
             }
             Application.DoEvents();
-            //foreach (System.Configuration.SettingsProperty item in Properties.Settings.Default.Properties)
-            //{
-
-
-            //    string valueName = item.Name;
-            //    string value = Properties.Settings.Default[valueName].ToString();
-            //    string[] values = value.Split(',');
-            //    string id = values[0];
-            //    int min = int.Parse(values[1]);
-            //    int max = int.Parse(values[2]);
-            //    if (row == 11)
-            //    {
-            //        row = 1;
-            //        col++;
-            //    }
-            //    Point point = new Point(MD.X + (col * sq) - (sq / 2), MD.Y + (row * sq) - (sq / 2));
-
-            //    Graphics g = Graphics.FromImage(image);
-            //    //Penオブジェクトの作成(幅3黒色)
-            //    Pen p = new Pen(Color.Black, 3);
-            //    //(10, 20)-(100, 200)に線を引く
-            //    g.DrawLine(p, 10, 20, 100, 200);
-
-            //    //リソースを解放する
-            //    p.Dispose();
-            //    g.Dispose();
-            //    //PictureBox1に表示する
-            //    pictureBox1.Image = image;
-
-            //    i++;
-            //    row++;
-            //}
         }
 
 
@@ -138,11 +112,29 @@ namespace GetParameterCS
                 Dictionary<double, double> aVal= clsRead.DicTimeVal(i);
                 writeJson.AddPoint(clsRead.Ids(i), aVal.Keys.ToList(), aVal.Values.ToList());
             }
+            //writeJson.WriteJson(saveFileDialog1.FileName);
             writeJson.WriteJson(saveFileDialog1.FileName);
             Console.WriteLine("出力");
             //lblStatus.Text = "完了";
         }
-        
+
+        private void MakePara(System.IO.StreamWriter sw, string gif, string rectangle, double fps = 30.0)
+        {
+            //Pointtest(rectangle);
+
+
+            ClsReadParameter clsRead = new ClsReadParameter(Image.FromFile(gif), rectangle, fps);
+            ClsWriteJson writeJson = new ClsWriteJson(clsRead.Duration, fps, clsRead.AllValCnt);
+            for (int i = 0; i < clsRead.Count(); i++)
+            {
+                Dictionary<double, double> aVal = clsRead.DicTimeVal(i);
+                writeJson.AddPoint(clsRead.Ids(i), aVal.Keys.ToList(), aVal.Values.ToList());
+            }
+            writeJson.WriteJson(sw);
+            Console.WriteLine("出力");
+            //lblStatus.Text = "完了";
+        }
+
 
         private void FrmMain_DragEnter(object sender, DragEventArgs e)
         {
@@ -180,6 +172,11 @@ namespace GetParameterCS
 
         private void DataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            // ヘッダー行の場合何もしない
+            if (e.RowIndex < 0)
+            {
+                return;
+            }
             // 削除　基本カレントセルは上に。
             if (dgvFiles.Columns[e.ColumnIndex].Name == "DgvBtnDel")
             {
@@ -203,6 +200,7 @@ namespace GetParameterCS
 
                 }
             }
+            // セーブ箇所設定（ファイル出力）ボタン
             else if (dgvFiles.Columns[e.ColumnIndex].Name == "DgvBtnSave")
             {
                 string filePath = dgvFiles.Rows[e.RowIndex].Cells["DgvFilePath"].Value.ToString();
@@ -211,12 +209,41 @@ namespace GetParameterCS
                 {
                     return;
                 }
+                saveFileDialog1.FileName = System.IO.Path.GetFileNameWithoutExtension(filePath) + ".motion3.json";
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
-                    MakePara(filePath, rectAngle);
+                    System.IO.Stream stream = saveFileDialog1.OpenFile();
+                    if (stream != null)
+                    {
+                        using (System.IO.StreamWriter sw = new System.IO.StreamWriter(stream))
+                        {
+                            ClsReadParameter clsRead = new ClsReadParameter(Image.FromFile(filePath), rectAngle, 30.0);
+                            ClsWriteJson writeJson = new ClsWriteJson(clsRead.Duration, clsRead.Fps, clsRead.AllValCnt);
+                            for (int i = 0; i < clsRead.Count(); i++)
+                            {
+                                Dictionary<double, double> aVal = clsRead.DicTimeVal(i);
+                                writeJson.AddPoint(clsRead.Ids(i), aVal.Keys.ToList(), aVal.Values.ToList());
+                            }
+                            writeJson.WriteJson(sw);
+                            Console.WriteLine("出力");
+                        }
+                    }
                     dgvFiles.Rows[showRow].Cells["DgvStatus"].Value = "変換・保存済み";
-                    
                 }
+            }
+            // ID名編集ボタン
+            else if (dgvFiles.Columns[e.ColumnIndex].Name == "DgvBtnSetID")
+            {
+
+                // 子フォームを出す。遷移先でDataTable(?)を書き換え？
+                // 行データにDataTableを連結する？
+                using (FormEditID editID = new FormEditID())
+                {
+                    editID.editTable = (DataTable)dgvFiles.Rows[e.RowIndex].Cells["DgvDtSetID"].Value;
+                    editID.ShowDialog(this);
+                    dgvFiles.Rows[e.RowIndex].Cells["DgvDtSetID"].Value = editID.editTable;
+                }
+                // セットされた値で戻ってくる
             }
             else
             {
@@ -225,12 +252,40 @@ namespace GetParameterCS
 
             }
         }
+
+        private DataTable NewSetID()
+        {
+            var SetID = new DataTable();
+            // SettingsからデフォルトのID名、最大値、最小値を取得してセッティングする
+            SetID.Columns.Add("ID");
+            SetID.Columns.Add("Min");
+            SetID.Columns.Add("Max");
+
+            for (int j = 1; j <= Properties.Settings.Default.Properties.Count; j++)
+            {
+                string value = Properties.Settings.Default["ID_" + j].ToString();
+
+                if (value.Length != 0)
+                {
+                    string[] values = value.Split(',');
+                    string id = values[0];
+                    int min = int.Parse(values[1]);
+                    int max = int.Parse(values[2]);
+                    SetID.Rows.Add(id, min, max);
+                }
+                else
+                {
+                    SetID.Rows.Add("", "", "");
+                }
+            }
+            return SetID;
+        }
+
         private void AdddgvRow(string fileName)
         {
-            dgvFiles.Rows.Add(Path.GetFileName(fileName), "未変換", "保存", "×", fileName, "");
+            dgvFiles.Rows.Add(Path.GetFileName(fileName), "未変換", "保存", "編集" ,"×", fileName, "", NewSetID());
             dgvFiles.CurrentCell = dgvFiles.Rows[dgvFiles.Rows.Count - 1].Cells[0];
             ShowGif(fileName, dgvFiles.Rows.Count - 1);
-
         }
 
         private bool ShowGif(string gif, int row = 1)

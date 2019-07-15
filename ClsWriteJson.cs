@@ -35,6 +35,26 @@ namespace GetParameterCS
             }
             };
         }
+        
+        public void WriteJson(System.IO.StreamWriter sw)
+        {
+            JsonSerializerSettings settings = new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented
+            };
+            string output = JsonConvert.SerializeObject(live2d, settings);
+            output = output.Replace("  ", "\t");
+            string[] rn = { "\r\n" };
+            string[] line = output.Split(rn, StringSplitOptions.None);
+            string printline;
+            foreach (string str in line)
+            {
+                printline = str.Replace("0.0,", "0,");
+                sw.WriteLine(printline);
+
+            }
+
+        }
 
         public void WriteJson(string jsonPath)
         {

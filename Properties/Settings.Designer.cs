@@ -61,7 +61,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamEyeLOpen,0,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamBodyAngleX,-10,10")]
         public string ID_4 {
             get {
                 return ((string)(this["ID_4"]));
@@ -73,7 +73,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamEyeLSmile,0,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamBodyAngleZ,-10,10")]
         public string ID_5 {
             get {
                 return ((string)(this["ID_5"]));
@@ -85,7 +85,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamEyeROpen,0,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamBreath,0,1")]
         public string ID_6 {
             get {
                 return ((string)(this["ID_6"]));
@@ -97,7 +97,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamEyeRSmile,0,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamEyeLOpen,0,1")]
         public string ID_7 {
             get {
                 return ((string)(this["ID_7"]));
@@ -109,7 +109,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamEyeBallX,-1,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamEyeROpen,0,1")]
         public string ID_8 {
             get {
                 return ((string)(this["ID_8"]));
@@ -121,7 +121,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamEyeBallY,-1,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamEyeBallX,-1,1")]
         public string ID_9 {
             get {
                 return ((string)(this["ID_9"]));
@@ -133,7 +133,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamEyeBallForm,-1,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamEyeBallY,-1,1")]
         public string ID_10 {
             get {
                 return ((string)(this["ID_10"]));
@@ -145,7 +145,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamBrowLY,-1,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamEyeForm,-1,1")]
         public string ID_11 {
             get {
                 return ((string)(this["ID_11"]));
@@ -157,7 +157,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamBrowRY,-1,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamBrowLY,-1,1")]
         public string ID_12 {
             get {
                 return ((string)(this["ID_12"]));
@@ -169,7 +169,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamBrowLX,-1,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamBrowRY,-1,1")]
         public string ID_13 {
             get {
                 return ((string)(this["ID_13"]));
@@ -181,7 +181,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamBrowRX,-1,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamBrowLForm,-1,1")]
         public string ID_14 {
             get {
                 return ((string)(this["ID_14"]));
@@ -193,7 +193,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamBrowLAngle,-1,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamBrowRForm,-1,1")]
         public string ID_15 {
             get {
                 return ((string)(this["ID_15"]));
@@ -205,7 +205,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamBrowRAngle,-1,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamBrowLAngle,-1,1")]
         public string ID_16 {
             get {
                 return ((string)(this["ID_16"]));
@@ -217,7 +217,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamBrowLForm,-1,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamBrowRAngle,-1,1")]
         public string ID_17 {
             get {
                 return ((string)(this["ID_17"]));
@@ -229,7 +229,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamBrowRForm,-1,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamMouthOpenY,0,1")]
         public string ID_18 {
             get {
                 return ((string)(this["ID_18"]));
@@ -253,7 +253,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamMouthOpenY,0,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamHairFront,-1,1")]
         public string ID_20 {
             get {
                 return ((string)(this["ID_20"]));
@@ -265,7 +265,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamCheek,0,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamHairSide,-1,1")]
         public string ID_21 {
             get {
                 return ((string)(this["ID_21"]));
@@ -277,7 +277,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamBodyAngleX,-10,10")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamHairBack,-1,1")]
         public string ID_22 {
             get {
                 return ((string)(this["ID_22"]));
@@ -289,7 +289,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamBodyAngleY,-10,10")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamHandL,-1,1")]
         public string ID_23 {
             get {
                 return ((string)(this["ID_23"]));
@@ -301,7 +301,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamBodyAngleZ,-10,10")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamHandR,-1,1")]
         public string ID_24 {
             get {
                 return ((string)(this["ID_24"]));
@@ -313,7 +313,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamBreath,0,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamArmLA,-10,10")]
         public string ID_25 {
             get {
                 return ((string)(this["ID_25"]));
@@ -325,7 +325,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamArmLA,-10,10")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamArmRA,-10,10")]
         public string ID_26 {
             get {
                 return ((string)(this["ID_26"]));
@@ -337,7 +337,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamArmRA,-10,10")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamArmLB,-10,10")]
         public string ID_27 {
             get {
                 return ((string)(this["ID_27"]));
@@ -349,7 +349,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamArmLB,-10,10")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamArmRB,-10,10")]
         public string ID_28 {
             get {
                 return ((string)(this["ID_28"]));
@@ -361,7 +361,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamArmRB,-10,10")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamZ,0,1")]
         public string ID_29 {
             get {
                 return ((string)(this["ID_29"]));
@@ -373,7 +373,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamHandL,-1,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamX,0,1")]
         public string ID_30 {
             get {
                 return ((string)(this["ID_30"]));
@@ -385,7 +385,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamHandR,-1,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamC,0,1")]
         public string ID_31 {
             get {
                 return ((string)(this["ID_31"]));
@@ -397,7 +397,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamHairFront,-1,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamV,0,1")]
         public string ID_32 {
             get {
                 return ((string)(this["ID_32"]));
@@ -409,7 +409,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamHairSide,-1,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamSZ,0,1")]
         public string ID_33 {
             get {
                 return ((string)(this["ID_33"]));
@@ -421,7 +421,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamHairBack,-1,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamSX,0,1")]
         public string ID_34 {
             get {
                 return ((string)(this["ID_34"]));
@@ -433,7 +433,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamHairFluffy,0,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamSC,0,1")]
         public string ID_35 {
             get {
                 return ((string)(this["ID_35"]));
@@ -445,7 +445,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamShoulderY,0,10")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamSV,0,1")]
         public string ID_36 {
             get {
                 return ((string)(this["ID_36"]));
@@ -457,7 +457,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamBustX,-1,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamQ,0,1")]
         public string ID_37 {
             get {
                 return ((string)(this["ID_37"]));
@@ -469,7 +469,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamBustY,-1,1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamW,0,1")]
         public string ID_38 {
             get {
                 return ((string)(this["ID_38"]));
@@ -481,7 +481,7 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamBaseX,-10,10")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamE,0,1")]
         public string ID_39 {
             get {
                 return ((string)(this["ID_39"]));
@@ -493,13 +493,133 @@ namespace GetParameterCS.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ParamBaseY,-10,10")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamR,0,1")]
         public string ID_40 {
             get {
                 return ((string)(this["ID_40"]));
             }
             set {
                 this["ID_40"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamT,0,1")]
+        public string ID_41 {
+            get {
+                return ((string)(this["ID_41"]));
+            }
+            set {
+                this["ID_41"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamY,0,1")]
+        public string ID_42 {
+            get {
+                return ((string)(this["ID_42"]));
+            }
+            set {
+                this["ID_42"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamTongue,0,1")]
+        public string ID_43 {
+            get {
+                return ((string)(this["ID_43"]));
+            }
+            set {
+                this["ID_43"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamCheek,0,1")]
+        public string ID_44 {
+            get {
+                return ((string)(this["ID_44"]));
+            }
+            set {
+                this["ID_44"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamTear,0,1")]
+        public string ID_45 {
+            get {
+                return ((string)(this["ID_45"]));
+            }
+            set {
+                this["ID_45"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamRage,0,1")]
+        public string ID_46 {
+            get {
+                return ((string)(this["ID_46"]));
+            }
+            set {
+                this["ID_46"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ParamHairFluffy,0,1")]
+        public string ID_47 {
+            get {
+                return ((string)(this["ID_47"]));
+            }
+            set {
+                this["ID_47"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ID_48 {
+            get {
+                return ((string)(this["ID_48"]));
+            }
+            set {
+                this["ID_48"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ID_49 {
+            get {
+                return ((string)(this["ID_49"]));
+            }
+            set {
+                this["ID_49"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ID_50 {
+            get {
+                return ((string)(this["ID_50"]));
+            }
+            set {
+                this["ID_50"] = value;
             }
         }
     }
