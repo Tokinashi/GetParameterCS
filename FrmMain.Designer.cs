@@ -42,8 +42,11 @@
             this.DgvBtnSave = new System.Windows.Forms.DataGridViewButtonColumn();
             this.DgvBtnSetID = new System.Windows.Forms.DataGridViewButtonColumn();
             this.DgvBtnDel = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.DgvDTSetID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DgvFilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DgvPoints = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.StartPoint = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.EndPoint = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -74,8 +77,8 @@
             this.splitContainer1.Panel2.BackColor = System.Drawing.SystemColors.ControlLight;
             this.splitContainer1.Panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.splitContainer1.Panel2.Controls.Add(this.pictureBox1);
-            this.splitContainer1.Size = new System.Drawing.Size(798, 499);
-            this.splitContainer1.SplitterDistance = 142;
+            this.splitContainer1.Size = new System.Drawing.Size(993, 641);
+            this.splitContainer1.SplitterDistance = 130;
             this.splitContainer1.TabIndex = 3;
             // 
             // dgvFiles
@@ -97,8 +100,11 @@
             this.DgvBtnSave,
             this.DgvBtnSetID,
             this.DgvBtnDel,
+            this.DgvDTSetID,
             this.DgvFilePath,
-            this.DgvPoints});
+            this.DgvPoints,
+            this.StartPoint,
+            this.EndPoint});
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle4.Font = new System.Drawing.Font("MS UI Gothic", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
@@ -114,9 +120,10 @@
             this.dgvFiles.RowHeadersVisible = false;
             this.dgvFiles.RowHeadersWidth = 62;
             this.dgvFiles.RowTemplate.Height = 27;
-            this.dgvFiles.Size = new System.Drawing.Size(798, 142);
+            this.dgvFiles.Size = new System.Drawing.Size(993, 130);
             this.dgvFiles.TabIndex = 0;
             this.dgvFiles.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellContentClick);
+            this.dgvFiles.CurrentCellChanged += new System.EventHandler(this.DgvFiles_CurrentCellChanged);
             // 
             // pictureBox1
             // 
@@ -136,7 +143,7 @@
             this.lblCaption.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
             this.lblCaption.Location = new System.Drawing.Point(0, 0);
             this.lblCaption.Name = "lblCaption";
-            this.lblCaption.Size = new System.Drawing.Size(798, 39);
+            this.lblCaption.Size = new System.Drawing.Size(993, 39);
             this.lblCaption.TabIndex = 4;
             this.lblCaption.Text = "ファイルをドラッグ＆ドロップ";
             this.lblCaption.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -148,6 +155,7 @@
             this.DgvFileName.MinimumWidth = 83;
             this.DgvFileName.Name = "DgvFileName";
             this.DgvFileName.ReadOnly = true;
+            this.DgvFileName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // DgvStatus
             // 
@@ -198,6 +206,15 @@
             this.DgvBtnDel.UseColumnTextForButtonValue = true;
             this.DgvBtnDel.Width = 28;
             // 
+            // DgvDTSetID
+            // 
+            this.DgvDTSetID.HeaderText = "DtSetID";
+            this.DgvDTSetID.MinimumWidth = 8;
+            this.DgvDTSetID.Name = "DgvDTSetID";
+            this.DgvDTSetID.ReadOnly = true;
+            this.DgvDTSetID.Visible = false;
+            this.DgvDTSetID.Width = 150;
+            // 
             // DgvFilePath
             // 
             this.DgvFilePath.HeaderText = "ファイルパス";
@@ -216,12 +233,30 @@
             this.DgvPoints.Visible = false;
             this.DgvPoints.Width = 150;
             // 
+            // StartPoint
+            // 
+            this.StartPoint.HeaderText = "StartPoint";
+            this.StartPoint.MinimumWidth = 8;
+            this.StartPoint.Name = "StartPoint";
+            this.StartPoint.ReadOnly = true;
+            this.StartPoint.Visible = false;
+            this.StartPoint.Width = 150;
+            // 
+            // EndPoint
+            // 
+            this.EndPoint.HeaderText = "EndPoint";
+            this.EndPoint.MinimumWidth = 8;
+            this.EndPoint.Name = "EndPoint";
+            this.EndPoint.ReadOnly = true;
+            this.EndPoint.Visible = false;
+            this.EndPoint.Width = 150;
+            // 
             // FrmMain
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(798, 544);
+            this.ClientSize = new System.Drawing.Size(993, 686);
             this.Controls.Add(this.lblCaption);
             this.Controls.Add(this.splitContainer1);
             this.Name = "FrmMain";
@@ -251,8 +286,11 @@
         private System.Windows.Forms.DataGridViewButtonColumn DgvBtnSave;
         private System.Windows.Forms.DataGridViewButtonColumn DgvBtnSetID;
         private System.Windows.Forms.DataGridViewButtonColumn DgvBtnDel;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DgvDTSetID;
         private System.Windows.Forms.DataGridViewTextBoxColumn DgvFilePath;
         private System.Windows.Forms.DataGridViewTextBoxColumn DgvPoints;
+        private System.Windows.Forms.DataGridViewTextBoxColumn StartPoint;
+        private System.Windows.Forms.DataGridViewTextBoxColumn EndPoint;
     }
 }
 

@@ -132,16 +132,16 @@
       <Value Profile="(Default)">ParamTongue,0,1</Value>
     </Setting>
     <Setting Name="ID_44" Type="System.String" Scope="User">
-      <Value Profile="(Default)">ParamCheek,0,1</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="ID_45" Type="System.String" Scope="User">
-      <Value Profile="(Default)">ParamTear,0,1</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="ID_46" Type="System.String" Scope="User">
-      <Value Profile="(Default)">ParamRage,0,1</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="ID_47" Type="System.String" Scope="User">
-      <Value Profile="(Default)">ParamHairFluffy,0,1</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="ID_48" Type="System.String" Scope="User">
       <Value Profile="(Default)" />

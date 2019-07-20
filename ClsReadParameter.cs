@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Data;
 using System.IO;
 using System.Linq;
 
@@ -30,6 +31,12 @@ namespace GetParameterCS
             Idprop = Idproperties(rectangle);
             SetVals(gif, Idprop);
         }
+        public ClsReadParameter(Image gif, string rectangle, DataTable editTable, double dblfps = 30.0)
+        {
+            Fps = dblfps;
+            Idprop = Setidproperties(editTable,rectangle);
+            SetVals(gif, Idprop);
+        }
         /// <summary>
         /// プロパティ向け、ＩＤが全何種類あるか
         /// </summary>
@@ -56,6 +63,44 @@ namespace GetParameterCS
         {
             return Idprop[i].id;
         }
+
+        private List<Idproperty> Setidproperties(DataTable editTable, string rectangle, int rowCnt = 10)
+        {
+            var idProp = new List<Idproperty>();
+
+            string[] rect = rectangle.Split(',');
+            Point MD = new Point(int.Parse(rect[0]), int.Parse(rect[1]));
+            Point MU = new Point(int.Parse(rect[2]), int.Parse(rect[3]));
+            int mHeight = Math.Abs(MD.Y - MU.Y);
+            int sq = mHeight / rowCnt;
+            int i = 0;
+            int row = 1;
+            int col = 1;
+
+            for (int j = 0; j < editTable.Rows.Count; j++)
+            {
+
+                // ID名があれば
+                if (editTable.Rows[j][0].ToString().Length > 0)
+                {
+                    string id = editTable.Rows[j][0].ToString();
+                    int min = (int)editTable.Rows[j][1];
+                    int max = (int)editTable.Rows[j][2];
+                    if (row == 11)
+                    {
+                        row = 1;
+                        col++;
+                    }
+                    Point point = new Point(MD.X + (col * sq) - (sq / 2), MD.Y + (row * sq) - (sq / 2));
+                    
+                    idProp.Add(new Idproperty(id, point, min, max, new Dictionary<double, double>()));
+                    i++;
+                    row++;
+                }
+            }
+            return idProp;
+        }
+
 
         /// <summary>
         /// gifから各ＩＤ分の時間・パラメータ値の推移を記録

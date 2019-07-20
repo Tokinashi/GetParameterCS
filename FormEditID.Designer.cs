@@ -59,6 +59,7 @@
             this.DgvEdit.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.DgvEdit.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DgvEdit.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DgvEdit.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.DgvEdit.Location = new System.Drawing.Point(0, 28);
             this.DgvEdit.Name = "DgvEdit";
             this.DgvEdit.RowHeadersVisible = false;
@@ -74,8 +75,11 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.DgvEdit);
             this.Controls.Add(this.lblGifName);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "FormEditID";
             this.Text = "パラメータ設定";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormEditID_FormClosing);
             this.Load += new System.EventHandler(this.FormEditID_Load);
             ((System.ComponentModel.ISupportInitialize)(this.DgvEdit)).EndInit();
             this.ResumeLayout(false);

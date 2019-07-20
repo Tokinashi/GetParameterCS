@@ -37,7 +37,7 @@ namespace GetParameterCS
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            ExePath = AppDomain.CurrentDomain.BaseDirectory + "\\";
+            ExePath = AppDomain.CurrentDomain.BaseDirectory;
             saveFileDialog1.InitialDirectory = ExePath;
             saveFileDialog1.Filter = "モーション設定ファイル(*.motion3.json)|*.motion3.json";
             saveFileDialog1.Title = "保存先のファイルを選択してください";
@@ -157,10 +157,11 @@ namespace GetParameterCS
                 if (Path.GetExtension(fileName) == ".gif")
                 {
                     AdddgvRow(fileName);
+                    lblCaption.Text = "ファイルをドラッグ＆ドロップ";
                 }
                 else
                 {
-                    lblCaption.Text += "gif以外が含まれていました";
+                    lblCaption.Text = "gif以外が含まれていました";
                 }
             }
         }
@@ -177,6 +178,7 @@ namespace GetParameterCS
             {
                 return;
             }
+            var DgvRow = dgvFiles.Rows[e.RowIndex];
             // 削除　基本カレントセルは上に。
             if (dgvFiles.Columns[e.ColumnIndex].Name == "DgvBtnDel")
             {
@@ -203,32 +205,38 @@ namespace GetParameterCS
             // セーブ箇所設定（ファイル出力）ボタン
             else if (dgvFiles.Columns[e.ColumnIndex].Name == "DgvBtnSave")
             {
-                string filePath = dgvFiles.Rows[e.RowIndex].Cells["DgvFilePath"].Value.ToString();
-                string rectAngle = dgvFiles.Rows[e.RowIndex].Cells["DgvPoints"].Value.ToString();
+                string filePath = DgvRow.Cells["DgvFilePath"].Value.ToString();
+                string rectAngle = DgvRow.Cells["DgvPoints"].Value.ToString();
                 if (rectAngle == "")
                 {
                     return;
                 }
-                saveFileDialog1.FileName = System.IO.Path.GetFileNameWithoutExtension(filePath) + ".motion3.json";
+                saveFileDialog1.FileName = System.IO.Path.GetFileNameWithoutExtension(filePath);
+                saveFileDialog1.InitialDirectory = ExePath;
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
-                    System.IO.Stream stream = saveFileDialog1.OpenFile();
+                    Stream stream = saveFileDialog1.OpenFile();
                     if (stream != null)
                     {
+                        DataTable editTable = (DataTable)DgvRow.Cells["DgvDtSetID"].Value;
                         using (System.IO.StreamWriter sw = new System.IO.StreamWriter(stream))
                         {
-                            ClsReadParameter clsRead = new ClsReadParameter(Image.FromFile(filePath), rectAngle, 30.0);
+                            //ClsReadParameter clsRead = new ClsReadParameter(Image.FromFile(filePath), rectAngle, 30.0);
+                            ClsReadParameter clsRead = new ClsReadParameter(Image.FromFile(filePath), rectAngle, editTable);
                             ClsWriteJson writeJson = new ClsWriteJson(clsRead.Duration, clsRead.Fps, clsRead.AllValCnt);
                             for (int i = 0; i < clsRead.Count(); i++)
                             {
+                                if (clsRead.Ids(i) != "")
+                                {
                                 Dictionary<double, double> aVal = clsRead.DicTimeVal(i);
                                 writeJson.AddPoint(clsRead.Ids(i), aVal.Keys.ToList(), aVal.Values.ToList());
+                                }
                             }
                             writeJson.WriteJson(sw);
                             Console.WriteLine("出力");
                         }
                     }
-                    dgvFiles.Rows[showRow].Cells["DgvStatus"].Value = "変換・保存済み";
+                    DgvRow.Cells["DgvStatus"].Value = "変換・保存済み";
                 }
             }
             // ID名編集ボタン
@@ -239,15 +247,15 @@ namespace GetParameterCS
                 // 行データにDataTableを連結する？
                 using (FormEditID editID = new FormEditID())
                 {
-                    editID.editTable = (DataTable)dgvFiles.Rows[e.RowIndex].Cells["DgvDtSetID"].Value;
+                    editID.EditTable = (DataTable)DgvRow.Cells["DgvDtSetID"].Value;
                     editID.ShowDialog(this);
-                    dgvFiles.Rows[e.RowIndex].Cells["DgvDtSetID"].Value = editID.editTable;
+                    DgvRow.Cells["DgvDtSetID"].Value = editID.EditTable;
                 }
                 // セットされた値で戻ってくる
             }
             else
             {
-                ShowGif(dgvFiles.Rows[e.RowIndex].Cells["DgvFilePath"].Value.ToString(),e.RowIndex);
+                ShowGif(DgvRow.Cells["DgvFilePath"].Value.ToString(),e.RowIndex);
             
 
             }
@@ -257,9 +265,9 @@ namespace GetParameterCS
         {
             var SetID = new DataTable();
             // SettingsからデフォルトのID名、最大値、最小値を取得してセッティングする
-            SetID.Columns.Add("ID");
-            SetID.Columns.Add("Min");
-            SetID.Columns.Add("Max");
+            SetID.Columns.Add("ID", Type.GetType("System.String"));
+            SetID.Columns.Add("Min", Type.GetType("System.Int32"));
+            SetID.Columns.Add("Max", Type.GetType("System.Int32"));
 
             for (int j = 1; j <= Properties.Settings.Default.Properties.Count; j++)
             {
@@ -275,7 +283,7 @@ namespace GetParameterCS
                 }
                 else
                 {
-                    SetID.Rows.Add("", "", "");
+                    SetID.Rows.Add("", 0, 0);
                 }
             }
             return SetID;
@@ -283,8 +291,22 @@ namespace GetParameterCS
 
         private void AdddgvRow(string fileName)
         {
-            dgvFiles.Rows.Add(Path.GetFileName(fileName), "未変換", "保存", "編集" ,"×", fileName, "", NewSetID());
-            dgvFiles.CurrentCell = dgvFiles.Rows[dgvFiles.Rows.Count - 1].Cells[0];
+            //dgvFiles.Rows.Add(Path.GetFileName(fileName), "座標未指定", "保存", "編集" ,"×", fileName, "", NewSetID());
+
+            //var newRow = dgvFiles.Rows[dgvFiles.RowCount - 1];
+            dgvFiles.Rows.Add();
+            var newRow = dgvFiles.Rows[dgvFiles.RowCount - 1];
+            newRow.Cells["DgvFileName"].Value = Path.GetFileName(fileName);
+            newRow.Cells["DgvStatus"].Value = "座標未指定";
+            newRow.Cells["DgvBtnSave"].Value = "保存";
+            newRow.Cells["DgvBtnSetID"].Value = "編集";
+            newRow.Cells["DgvBtnDel"].Value = "×";
+            newRow.Cells["StartPoint"].Value = "";
+            newRow.Cells["DgvFilePath"].Value = fileName;
+            newRow.Cells["DgvDTSetID"].Value = NewSetID();
+
+            DataTable table = (DataTable)dgvFiles.CurrentRow.Cells["DgvDtSetID"].Value;
+            
             ShowGif(fileName, dgvFiles.Rows.Count - 1);
         }
 
@@ -300,6 +322,20 @@ namespace GetParameterCS
                     g.DrawImage(image, new Point(0, 0));
                     g.Dispose();
                 }
+
+                // 既に短形指定済みなら
+                if (dgvFiles.Rows[row].Cells["StartPoint"].Value.ToString() != "")
+                {
+                    Point start = (Point)dgvFiles.Rows[row].Cells["StartPoint"].Value;
+                    Point end = (Point)dgvFiles.Rows[row].Cells["EndPoint"].Value;
+
+                    // 領域を描画
+                    DrawRegion(start, end);
+
+                    //PictureBox1に表示する
+                    pictureBox1.Image = bmp;
+                }
+
                 pictureBox1.Image = bmp;
                 showRow = row;
                 lblCaption.Text = dgvFiles.Rows[row].Cells["DgvFileName"].Value.ToString();
@@ -352,6 +388,10 @@ namespace GetParameterCS
             string strPoints = "(" + MD.X.ToString() + "," + MD.Y.ToString() + ") / (" + MU.X.ToString() + "," + MU.Y.ToString() + ")";
             dgvFiles.Rows[showRow].Cells["DgvStatus"].Value = strPoints;
             dgvFiles.Rows[showRow].Cells["DgvPoints"].Value = strPoints.Replace("(","").Replace(")","").Replace("/",",");
+            dgvFiles.Rows[showRow].Cells["StartPoint"].Value = MD;
+            dgvFiles.Rows[showRow].Cells["EndPoint"].Value = MU;
+
+
         }
 
         private void PictureBox1_MouseMove(object sender, MouseEventArgs e)
@@ -394,7 +434,7 @@ namespace GetParameterCS
 
         private void DrawRegion(Point start, Point end)
         {
-            Pen blackPen = new Pen(Color.Black);
+            Pen blackPen = new Pen(Color.Red);
             
             Graphics g = Graphics.FromImage(bmp);
 
@@ -409,6 +449,16 @@ namespace GetParameterCS
             g.DrawRectangle(blackPen, start.X, start.Y, GetLength(start.X, end.X), GetLength(start.Y, end.Y));
 
             g.Dispose();
+        }
+
+        private void DgvFiles_CurrentCellChanged(object sender, EventArgs e)
+        {
+            if (dgvFiles.CurrentCell != null & dgvFiles.CurrentRow.Index > 0)
+            {
+                
+                string fileName = dgvFiles.CurrentRow.Cells["DgvFileName"].Value.ToString();
+                ShowGif(fileName, dgvFiles.CurrentRow.Index);
+            }
         }
     }
 }
