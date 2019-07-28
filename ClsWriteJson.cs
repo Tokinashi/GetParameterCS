@@ -56,29 +56,6 @@ namespace GetParameterCS
 
         }
 
-        public void WriteJson(string jsonPath)
-        {
-            JsonSerializerSettings settings = new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented
-            };
-            string output = JsonConvert.SerializeObject(live2d, settings);
-            output = output.Replace("  ", "\t");
-            using (StreamWriter sw = new System.IO.StreamWriter(jsonPath))
-            {
-                string[] rn = { "\r\n" };
-                string[] line = output.Split(rn,StringSplitOptions.None);
-                string printline;
-                foreach (string str in line)
-                {
-                    printline = str.Replace("0.0,", "0,");
-                    sw.WriteLine(printline);
-                    
-                }
-                sw.Close();
-            }
-        }
-
         public void AddPoint(string id, List<double> keys, List<double> value)
         {
             CurvePoint newSeg = new CurvePoint
@@ -108,8 +85,6 @@ namespace GetParameterCS
             return Math.Truncate(num * 100.0) / 100.0;
         }
     }
-    
-
 
     class Live2dJson
     {

@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.lblGifName = new System.Windows.Forms.Label();
             this.DgvEdit = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.DgvEdit)).BeginInit();
@@ -58,6 +59,14 @@
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.DgvEdit.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.DgvEdit.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.LightBlue;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.DgvEdit.DefaultCellStyle = dataGridViewCellStyle2;
             this.DgvEdit.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DgvEdit.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.DgvEdit.Location = new System.Drawing.Point(0, 28);
@@ -67,6 +76,7 @@
             this.DgvEdit.RowTemplate.Height = 27;
             this.DgvEdit.Size = new System.Drawing.Size(800, 422);
             this.DgvEdit.TabIndex = 1;
+            this.DgvEdit.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DgvEdit_CellClick);
             // 
             // FormEditID
             // 

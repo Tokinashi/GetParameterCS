@@ -6,41 +6,106 @@ using System.IO;
 using System.Drawing;
 using System.Data;
 using System.Drawing.Imaging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 // VB版の移植するもの
 namespace GetParameterCS
 {
     public partial class FrmMain : Form
     {
+        #region "変数"
+        // フォーム設定
+        DataSetting dataSetting;
+
+        // スタイル
+        readonly DataGridViewCellStyle compStyle = new DataGridViewCellStyle();
+        // マウスクリック位置
         Point MD = new Point();
         Point MU = new Point();
+     
+        bool view = false;
         Bitmap bmp;
         Image image;
         int showRow;
-        bool view = false;
-        string ExePath;
+        readonly string ExePath;
 
-        //private void DebugMethod()
-        //{
-        //    ExePath = AppDomain.CurrentDomain.BaseDirectory + "\\";
-        //    string csvPath = ExePath + "Default.csv";
-        //    string gifPath = ExePath + "Facerig.gif";
-        //    MakePara(gifPath, csvPath, 30);
-
-        //}
+        #endregion
 
         public FrmMain()
         {
+            ExePath = AppDomain.CurrentDomain.BaseDirectory;
             InitializeComponent();
             view = false;
-        }
+            // スタイルの設定
+            compStyle.BackColor = Color.Yellow;
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            ExePath = AppDomain.CurrentDomain.BaseDirectory;
-            saveFileDialog1.InitialDirectory = ExePath;
+            if (File.Exists(ExePath + "Setting.json"))
+            {
+                using (StreamReader sr = new StreamReader(ExePath + "Setting.json"))
+                {
+                    string input = sr.ReadToEnd();
+                    dataSetting = JsonConvert.DeserializeObject<DataSetting>(input);
+
+                }
+            }
+            else
+            {
+                dataSetting = new DataSetting()
+                {
+                    WindowHeight = Height,
+                    WindowWidth = Width,
+                    WindowLocation = Location,
+                    OutputDir = ExePath,
+                    IDs = DefaultIDSetting
+                };
+                // インデント、改行をつけて出力
+                var settings = new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    Formatting = Formatting.Indented
+                };
+
+                string output = JsonConvert.SerializeObject(dataSetting,settings);
+                output = output.Replace("  ", "\t");
+                using (StreamWriter sw = new StreamWriter(ExePath + "Setting.json"))
+                {
+                    sw.Write(output);
+                }
+            }
+            // セーブダイアログ設定
+            saveFileDialog1.InitialDirectory = dataSetting.OutputDir;
             saveFileDialog1.Filter = "モーション設定ファイル(*.motion3.json)|*.motion3.json";
             saveFileDialog1.Title = "保存先のファイルを選択してください";
+        }
+
+        private void FrmMain_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            dataSetting.WindowHeight = Height;
+            dataSetting.WindowWidth = Width;
+            dataSetting.WindowLocation = Location;
+
+            var settings = new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+            string output = JsonConvert.SerializeObject(dataSetting, settings);
+            output = output.Replace("  ", "\t");
+            using (StreamWriter sw = new StreamWriter(ExePath + "Setting.json"))
+            {
+                sw.Write(output);
+            }
+        }
+
+        private void FrmMain_Load(object sender, EventArgs e)
+        {
+
+            // formの形を変えておく
+            Height = dataSetting.WindowHeight;
+            Width = dataSetting.WindowWidth;
+            Location = dataSetting.WindowLocation;
+
             DataGridViewCell cell = new DataGridViewTextBoxCell();
             var DtColumn = new DataGridViewColumn
             {
@@ -50,11 +115,6 @@ namespace GetParameterCS
             };
             dgvFiles.Columns.Add(DtColumn);
 
-        }
-        
-        private void Button1_Click(object sender, EventArgs e)
-        {
-            //DebugMethod();
         }
 
         private void Pointtest(string rectangle,int rowCnt = 10)
@@ -99,43 +159,6 @@ namespace GetParameterCS
             Application.DoEvents();
         }
 
-
-        private void MakePara(string gif, string rectangle, double fps = 30.0)
-        {
-            //Pointtest(rectangle);
-
-
-            ClsReadParameter clsRead = new ClsReadParameter(Image.FromFile(gif), rectangle, fps);
-            ClsWriteJson writeJson = new ClsWriteJson(clsRead.Duration, fps, clsRead.AllValCnt);
-            for (int i = 0; i < clsRead.Count(); i++)
-            {
-                Dictionary<double, double> aVal= clsRead.DicTimeVal(i);
-                writeJson.AddPoint(clsRead.Ids(i), aVal.Keys.ToList(), aVal.Values.ToList());
-            }
-            //writeJson.WriteJson(saveFileDialog1.FileName);
-            writeJson.WriteJson(saveFileDialog1.FileName);
-            Console.WriteLine("出力");
-            //lblStatus.Text = "完了";
-        }
-
-        private void MakePara(System.IO.StreamWriter sw, string gif, string rectangle, double fps = 30.0)
-        {
-            //Pointtest(rectangle);
-
-
-            ClsReadParameter clsRead = new ClsReadParameter(Image.FromFile(gif), rectangle, fps);
-            ClsWriteJson writeJson = new ClsWriteJson(clsRead.Duration, fps, clsRead.AllValCnt);
-            for (int i = 0; i < clsRead.Count(); i++)
-            {
-                Dictionary<double, double> aVal = clsRead.DicTimeVal(i);
-                writeJson.AddPoint(clsRead.Ids(i), aVal.Keys.ToList(), aVal.Values.ToList());
-            }
-            writeJson.WriteJson(sw);
-            Console.WriteLine("出力");
-            //lblStatus.Text = "完了";
-        }
-
-
         private void FrmMain_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -166,11 +189,6 @@ namespace GetParameterCS
             }
         }
 
-        private void SplitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
         private void DataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             // ヘッダー行の場合何もしない
@@ -178,52 +196,47 @@ namespace GetParameterCS
             {
                 return;
             }
+
             var DgvRow = dgvFiles.Rows[e.RowIndex];
-            // 削除　基本カレントセルは上に。
+            // カレントセル変更が発生するのでハンドラを削除しておく
+
+            // 削除　画像も消す。
             if (dgvFiles.Columns[e.ColumnIndex].Name == "DgvBtnDel")
             {
+                dgvFiles.CurrentCellChanged -= new EventHandler(DgvFiles_CurrentCellChanged);
+
                 dgvFiles.Rows.RemoveAt(e.RowIndex);
-                // 一番上だった場合
-                if (e.RowIndex == 0)
-                {   
-                    /// もうデータがない場合
-                    if (dgvFiles.Rows.Count == 0)
-                    {
-                        pictureBox1.Visible = false;
-                        lblCaption.Text = "ファイルをドラッグ＆ドロップ";
-                    }
-                    /// 下のデータが上に繰り上がるのでそちらをカレントセルにする
-                    else { dgvFiles.CurrentCell = dgvFiles.Rows[0].Cells[0]; }
+                pictureBox1.Visible = false;
+                lblCaption.Text = "ファイルをドラッグ＆ドロップ";
 
-                }
-                else
-                {
-                dgvFiles.CurrentCell = dgvFiles.Rows[e.RowIndex-1].Cells[0];
+                dgvFiles.CurrentCellChanged += new EventHandler(DgvFiles_CurrentCellChanged);
 
-                }
             }
             // セーブ箇所設定（ファイル出力）ボタン
             else if (dgvFiles.Columns[e.ColumnIndex].Name == "DgvBtnSave")
             {
                 string filePath = DgvRow.Cells["DgvFilePath"].Value.ToString();
                 string rectAngle = DgvRow.Cells["DgvPoints"].Value.ToString();
-                if (rectAngle == "")
-                {
-                    return;
-                }
-                saveFileDialog1.FileName = System.IO.Path.GetFileNameWithoutExtension(filePath);
-                saveFileDialog1.InitialDirectory = ExePath;
+                if (rectAngle == "") { return; }
+
+                var MD = (Point)DgvRow.Cells["StartPoint"].Value;
+                var MU = (Point)DgvRow.Cells["EndPoint"].Value;
+
+                saveFileDialog1.FileName = Path.GetFileNameWithoutExtension(filePath);
+                saveFileDialog1.InitialDirectory = dataSetting.OutputDir;
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
+                    // 選択されたフォルダを記録
+                    dataSetting.OutputDir = Path.GetDirectoryName(saveFileDialog1.FileName);
+
                     Stream stream = saveFileDialog1.OpenFile();
                     if (stream != null)
                     {
                         DataTable editTable = (DataTable)DgvRow.Cells["DgvDtSetID"].Value;
                         using (System.IO.StreamWriter sw = new System.IO.StreamWriter(stream))
                         {
-                            //ClsReadParameter clsRead = new ClsReadParameter(Image.FromFile(filePath), rectAngle, 30.0);
-                            ClsReadParameter clsRead = new ClsReadParameter(Image.FromFile(filePath), rectAngle, editTable);
-                            ClsWriteJson writeJson = new ClsWriteJson(clsRead.Duration, clsRead.Fps, clsRead.AllValCnt);
+                            var clsRead = new ClsReadParameter(Image.FromFile(filePath), rectAngle, editTable);
+                            var writeJson = new ClsWriteJson(clsRead.Duration, clsRead.Fps, clsRead.AllValCnt);
                             for (int i = 0; i < clsRead.Count(); i++)
                             {
                                 if (clsRead.Ids(i) != "")
@@ -237,6 +250,7 @@ namespace GetParameterCS
                         }
                     }
                     DgvRow.Cells["DgvStatus"].Value = "変換・保存済み";
+                    DgvRow.Cells["DgvStatus"].Style = compStyle;
                 }
             }
             // ID名編集ボタン
@@ -256,8 +270,6 @@ namespace GetParameterCS
             else
             {
                 ShowGif(DgvRow.Cells["DgvFilePath"].Value.ToString(),e.RowIndex);
-            
-
             }
         }
 
@@ -294,6 +306,8 @@ namespace GetParameterCS
             //dgvFiles.Rows.Add(Path.GetFileName(fileName), "座標未指定", "保存", "編集" ,"×", fileName, "", NewSetID());
 
             //var newRow = dgvFiles.Rows[dgvFiles.RowCount - 1];
+            dgvFiles.CurrentCellChanged -= new EventHandler(DgvFiles_CurrentCellChanged);
+
             dgvFiles.Rows.Add();
             var newRow = dgvFiles.Rows[dgvFiles.RowCount - 1];
             newRow.Cells["DgvFileName"].Value = Path.GetFileName(fileName);
@@ -301,13 +315,18 @@ namespace GetParameterCS
             newRow.Cells["DgvBtnSave"].Value = "保存";
             newRow.Cells["DgvBtnSetID"].Value = "編集";
             newRow.Cells["DgvBtnDel"].Value = "×";
-            newRow.Cells["StartPoint"].Value = "";
-            newRow.Cells["DgvFilePath"].Value = fileName;
             newRow.Cells["DgvDTSetID"].Value = NewSetID();
+            newRow.Cells["DgvFilePath"].Value = fileName;
+            newRow.Cells["DgvPoints"].Value = "";
+            newRow.Cells["StartPoint"].Value = "";
+            newRow.Cells["EndPoint"].Value = "";
+
+            // まだ範囲を設定されていないので保存ボタンをコントロール不可能っぽく
 
             DataTable table = (DataTable)dgvFiles.CurrentRow.Cells["DgvDtSetID"].Value;
             
             ShowGif(fileName, dgvFiles.Rows.Count - 1);
+            dgvFiles.CurrentCellChanged += new EventHandler(DgvFiles_CurrentCellChanged);
         }
 
         private bool ShowGif(string gif, int row = 1)
@@ -453,12 +472,73 @@ namespace GetParameterCS
 
         private void DgvFiles_CurrentCellChanged(object sender, EventArgs e)
         {
-            if (dgvFiles.CurrentCell != null & dgvFiles.CurrentRow.Index > 0)
+            if (dgvFiles.CurrentCell != null & dgvFiles.CurrentRow.Index >= 0)
             {
-                
-                string fileName = dgvFiles.CurrentRow.Cells["DgvFileName"].Value.ToString();
+
+                string fileName = dgvFiles.CurrentRow.Cells["DgvFilePath"].Value.ToString();
                 ShowGif(fileName, dgvFiles.CurrentRow.Index);
             }
         }
+
+
+        public List<IDSetting> DefaultIDSetting
+        {
+            get
+            {
+                List<IDSetting> iDSettings = new List<IDSetting>
+                {
+                    new IDSetting("ParamAngleX", -30, 30),
+                    new IDSetting("ParamAngleY", -30, 30),
+                    new IDSetting("ParamAngleZ", -30, 30),
+                    new IDSetting("ParamBodyAngleX", -10, 10),
+                    new IDSetting("ParamBodyAngleZ", -10, 10),
+                    new IDSetting("ParamBreath", 0, 1),
+                    new IDSetting("ParamEyeLOpen", 0, 1),
+                    new IDSetting("ParamEyeROpen", 0, 1),
+                    new IDSetting("ParamEyeBallX", -1, 1),
+                    new IDSetting("ParamEyeBallY", -1, 1),
+
+                    new IDSetting("ParamEyeForm", -1, 1),
+                    new IDSetting("ParamBrowLY", -1, 1),
+                    new IDSetting("ParamBrowRY", -1, 1),
+                    new IDSetting("ParamBrowLForm", -1, 1),
+                    new IDSetting("ParamBrowRForm", -1, 1),
+                    new IDSetting("ParamBrowLAngle", -1, 1),
+                    new IDSetting("ParamBrowRAngle", -1, 1),
+                    new IDSetting("ParamMouthOpenY", 0, 1),
+                    new IDSetting("ParamMouthForm", -1, 1),
+                    new IDSetting("ParamHairFront", -1, 1),
+
+                    new IDSetting("ParamHairSide", -1, 1),
+                    new IDSetting("ParamHairBack", -1, 1),
+                    new IDSetting("ParamHandL", -1, 1),
+                    new IDSetting("ParamHandR", -1, 1),
+                    new IDSetting("ParamArmLA", -10, 10),
+                    new IDSetting("ParamArmRA", -10, 10),
+                    new IDSetting("ParamArmLB", -10, 10),
+                    new IDSetting("ParamArmRB", -10, 10),
+                    new IDSetting("ParamZ", 0, 1),
+                    new IDSetting("ParamX", 0, 1),
+
+                    new IDSetting("ParamC", 0, 1),
+                    new IDSetting("ParamV", 0, 1),
+                    new IDSetting("ParamSZ", 0, 1),
+                    new IDSetting("ParamSX", 0, 1),
+                    new IDSetting("ParamSC", 0, 1),
+                    new IDSetting("ParamSV", 0, 1),
+                    new IDSetting("ParamQ", 0, 1),
+                    new IDSetting("ParamW", 0, 1),
+                    new IDSetting("ParamE", 0, 1),
+                    new IDSetting("ParamR", 0, 1),
+
+                    new IDSetting("ParamT", 0, 1),
+                    new IDSetting("ParamY", 0, 1),
+                    new IDSetting("ParamTongue", 0, 1)
+                };
+
+                return iDSettings;
+            }
+        }
+
     }
 }

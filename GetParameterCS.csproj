@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="ClsReadParameter.cs" />
     <Compile Include="ClsWriteJson.cs" />
+    <Compile Include="DataSetting.cs" />
     <Compile Include="FormEditID.cs">
       <SubType>Form</SubType>
     </Compile>
