@@ -10,6 +10,7 @@ namespace GetParameterCS
 {
     public class DataSetting
     {
+        public string InputDir { get; set; }
         public string OutputDir { get; set; }
         public int WindowHeight { get; set; }
         public int WindowWidth { get; set; }

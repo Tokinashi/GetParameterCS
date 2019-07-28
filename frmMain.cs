@@ -281,17 +281,12 @@ namespace GetParameterCS
             SetID.Columns.Add("Min", Type.GetType("System.Int32"));
             SetID.Columns.Add("Max", Type.GetType("System.Int32"));
 
-            for (int j = 1; j <= Properties.Settings.Default.Properties.Count; j++)
+            for (int j = 0;j < dataSetting.IDs.Count; j++)
             {
-                string value = Properties.Settings.Default["ID_" + j].ToString();
-
-                if (value.Length != 0)
+                var dt = dataSetting.IDs[j];
+                if (dt.ID.Length != 0)
                 {
-                    string[] values = value.Split(',');
-                    string id = values[0];
-                    int min = int.Parse(values[1]);
-                    int max = int.Parse(values[2]);
-                    SetID.Rows.Add(id, min, max);
+                    SetID.Rows.Add(dt.ID, dt.Min, dt.Max);
                 }
                 else
                 {
@@ -377,7 +372,6 @@ namespace GetParameterCS
             // Mouseを押した座標を記録
             MD.X = e.X;
             MD.Y = e.Y;
-
         }
 
         private void PictureBox1_MouseUp(object sender, MouseEventArgs e)
@@ -409,7 +403,6 @@ namespace GetParameterCS
             dgvFiles.Rows[showRow].Cells["DgvPoints"].Value = strPoints.Replace("(","").Replace(")","").Replace("/",",");
             dgvFiles.Rows[showRow].Cells["StartPoint"].Value = MD;
             dgvFiles.Rows[showRow].Cells["EndPoint"].Value = MU;
-
 
         }
 
@@ -474,7 +467,6 @@ namespace GetParameterCS
         {
             if (dgvFiles.CurrentCell != null & dgvFiles.CurrentRow.Index >= 0)
             {
-
                 string fileName = dgvFiles.CurrentRow.Cells["DgvFilePath"].Value.ToString();
                 ShowGif(fileName, dgvFiles.CurrentRow.Index);
             }
