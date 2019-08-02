@@ -32,6 +32,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.lblGifName = new System.Windows.Forms.Label();
             this.DgvEdit = new System.Windows.Forms.DataGridView();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.DgvEdit)).BeginInit();
             this.SuspendLayout();
             // 
@@ -50,6 +51,7 @@
             // 
             this.DgvEdit.AllowUserToAddRows = false;
             this.DgvEdit.AllowUserToDeleteRows = false;
+            this.DgvEdit.BackgroundColor = System.Drawing.SystemColors.ControlDarkDark;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
@@ -69,7 +71,9 @@
             this.DgvEdit.DefaultCellStyle = dataGridViewCellStyle2;
             this.DgvEdit.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DgvEdit.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.DgvEdit.GridColor = System.Drawing.Color.Black;
             this.DgvEdit.Location = new System.Drawing.Point(0, 28);
+            this.DgvEdit.MinimumSize = new System.Drawing.Size(280, 120);
             this.DgvEdit.Name = "DgvEdit";
             this.DgvEdit.RowHeadersVisible = false;
             this.DgvEdit.RowHeadersWidth = 62;
@@ -78,15 +82,29 @@
             this.DgvEdit.TabIndex = 1;
             this.DgvEdit.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DgvEdit_CellClick);
             // 
+            // button1
+            // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.button1.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.button1.Location = new System.Drawing.Point(698, 0);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(102, 29);
+            this.button1.TabIndex = 2;
+            this.button1.Text = "元に戻す";
+            this.button1.UseVisualStyleBackColor = false;
+            // 
             // FormEditID
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.DgvEdit);
             this.Controls.Add(this.lblGifName);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(380, 120);
             this.Name = "FormEditID";
             this.Text = "パラメータ設定";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormEditID_FormClosing);
@@ -100,5 +118,6 @@
 
         private System.Windows.Forms.Label lblGifName;
         private System.Windows.Forms.DataGridView DgvEdit;
+        private System.Windows.Forms.Button button1;
     }
 }

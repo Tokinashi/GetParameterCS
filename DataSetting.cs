@@ -23,13 +23,16 @@ namespace GetParameterCS
         public string ID { get; set; }
         public int Min { get; set; }
         public int Max { get; set; }
+        public double PerTolerance { get; set; }
 
-        public IDSetting(string iD, int min, int max)
+        public IDSetting(string iD, int min, int max, double perTolerance = 0)
         {
             ID = iD;
             Min = min;
             Max = max;
+            PerTolerance = perTolerance;
         }
+
     }
 
 }

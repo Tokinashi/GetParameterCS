@@ -15,14 +15,16 @@ namespace GetParameterCS
         //プロパティ
         public DataTable EditTable { get; set; }
         public string GifName { get; set; }
+        private DataTable firstTB { get; set; }
 
         private readonly DataGridViewCellStyle HeaderStyle = new DataGridViewCellStyle();
+        private readonly DataGridViewCellStyle NumStyle = new DataGridViewCellStyle();
         private readonly DataGridViewCellStyle ErrorStyle = new DataGridViewCellStyle();
-
         public FormEditID()
         {
             InitializeComponent();
             HeaderStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            NumStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             ErrorStyle.BackColor = Color.OrangeRed;
         }
 
@@ -36,6 +38,8 @@ namespace GetParameterCS
             DgvEdit.AllowUserToResizeRows = false;
             DgvEdit.AllowUserToDeleteRows = false;
             DgvEdit.AllowDrop = false;
+
+            firstTB = EditTable.Copy();
 
             // 番号列
             DataGridViewTextBoxColumn numColumn = new DataGridViewTextBoxColumn
@@ -64,7 +68,8 @@ namespace GetParameterCS
                 DataPropertyName = "Min",
                 Name = "Min",
                 HeaderText = "最小値",
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                DefaultCellStyle = NumStyle,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader,
                 SortMode = DataGridViewColumnSortMode.NotSortable
 };
             // 最大値
@@ -73,6 +78,16 @@ namespace GetParameterCS
                 DataPropertyName = "Max",
                 Name = "Max",
                 HeaderText = "最大値",
+                DefaultCellStyle = NumStyle,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader,
+                SortMode = DataGridViewColumnSortMode.NotSortable
+            };
+            DataGridViewTextBoxColumn pertolcolumn = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "Tolerance",
+                Name = "Tol",
+                HeaderText = "許容誤差（1.00=100%）",
+                DefaultCellStyle = NumStyle,
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
                 SortMode = DataGridViewColumnSortMode.NotSortable
             };
@@ -80,6 +95,7 @@ namespace GetParameterCS
             DgvEdit.Columns.Add(idColumn);
             DgvEdit.Columns.Add(minColumn);
             DgvEdit.Columns.Add(maxcolumn);
+            DgvEdit.Columns.Add(pertolcolumn);
 
             // 項番数を編集
             for (int i = 0; i < DgvEdit.Rows.Count; i++)
@@ -92,42 +108,97 @@ namespace GetParameterCS
 
         private void FormEditID_FormClosing(object sender, FormClosingEventArgs e)
         {
-            DgvEdit.EndEdit();
+            _ = DgvEdit.EndEdit();
+            CheckError();
             // ＩＤ名に重複がないかチェック
-            string ret = DistinctCheck();
-            if (ret != "")
+            bool ret = DistinctCheck();
+            if (!ret)
             {
-                MessageBox.Show(ret + "が重複しています");
+                DialogResult result = MessageBox.Show("不正な設定があります\r\n最初の設定に戻しますか？", 
+                    "設定エラー", 
+                    MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    ResetDT(firstTB);
+                    DgvEdit.CurrentCell = DgvEdit[0, 0];
+                }
+                
                 e.Cancel = true;
             }
         }
-        private string DistinctCheck()
+
+        private void ResetDT(DataTable dt)
         {
-            List<string> lstID = new List<string>();
-            foreach (DataRow row in EditTable.Rows){
-                if (lstID.Contains(row[0].ToString()))
+            for (int i = 0; i < DgvEdit.RowCount; i++)
+            {
+                DataGridViewRow row = DgvEdit.Rows[i];
+                DataRow dtrow = dt.Rows[i];
+
+                //TODO:パラメータ移し替え処理
+
+                row.Cells["ID"].Value = dtrow["ID"];
+                row.Cells["Max"].Value = dtrow["Max"];
+                row.Cells["Min"].Value = dtrow["Min"];
+                row.Cells["Tol"].Value = dtrow["Tolerance"];
+
+                row.Cells["ID"].Style = DgvEdit.DefaultCellStyle;
+                row.Cells["Max"].Style = NumStyle;
+                row.Cells["Min"].Style = NumStyle;
+                row.Cells["Tol"].Style = NumStyle;
+
+            }
+            CheckError();
+        }
+
+        private bool DistinctCheck()
+        {
+            foreach (DataGridViewRow row in DgvEdit.Rows)
+            {
+                if(row.Cells["ID"].Style == ErrorStyle)
                 {
-                    return row[0].ToString();
+                    Console.WriteLine(row.Index + ":ID:");
+                    return false;
                 }
-                else
+                if(row.Cells["Max"].Style == ErrorStyle)
                 {
-                    lstID.Add(row[0].ToString());
+                    Console.WriteLine(row.Index + ":Max");
+                    return false;
+                }
+                if(row.Cells["Min"].Style == ErrorStyle)
+                {
+                    Console.WriteLine(row.Index + ":Min:");
+                    return false;
+                }
+                if(row.Cells["Tol"].Style == ErrorStyle)
+                {
+                    Console.WriteLine(row.Index + ":Tol:");
+                    return false;
                 }
             }
-            return "";
+            return true;
         }
         private void DgvEdit_CurrentCellChanged(object sender, EventArgs e)
         {
+            CheckError();
+        }
+
+        private void CheckError()
+        {
+
             List<string> lstID = new List<string>();
-            // 重複があれば背景を灰色にする
+            // 重複があればセルの色を変える
             foreach (DataGridViewRow row in DgvEdit.Rows)
             {
                 string search = row.Cells["ID"].Value.ToString();
                 DataGridViewCell idcell = row.Cells["ID"];
                 DataGridViewCell maxcell = row.Cells["Max"];
                 DataGridViewCell mincell = row.Cells["Min"];
-
-                if (lstID.Contains(search))
+                DataGridViewCell tolcell = row.Cells["Tol"];
+                if (search == "")
+                {
+                    continue;
+                }
+                else if (lstID.Contains(search) && search != "")
                 {
                     int num = lstID.IndexOf(search);
                     idcell.Style = ErrorStyle;
@@ -135,7 +206,7 @@ namespace GetParameterCS
 
                     lstID.Add(search);
                 }
-                else
+                else 
                 {
                     if (idcell.Style == ErrorStyle)
                     {
@@ -152,12 +223,20 @@ namespace GetParameterCS
                 }
                 else if (maxcell.Style == ErrorStyle)
                 {
-                    maxcell.Style = DgvEdit.DefaultCellStyle;
+                    maxcell.Style = NumStyle;
+                    mincell.Style = NumStyle;
                 }
-                else if (mincell.Style == ErrorStyle)
+
+                // 許容誤差が0～1から外れている
+                if (0 > (double)tolcell.Value || (double)tolcell.Value > 1.0)
                 {
-                    mincell.Style = DgvEdit.DefaultCellStyle;
+                    tolcell.Style = ErrorStyle;
                 }
+                else if (tolcell.Style == ErrorStyle)
+                {
+                    tolcell.Style = NumStyle;
+                }
+                
             }
         }
 

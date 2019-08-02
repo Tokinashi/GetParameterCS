@@ -146,9 +146,6 @@ namespace GetParameterCS
                     g.DrawLine(p, point.X - 5, point.Y - 5, point.X + 5, point.Y + 5);
                     g.DrawLine(p, point.X + 5, point.Y - 5, point.X - 5, point.Y + 5);
 
-                    //リソースを解放する
-                    p.Dispose();
-                    g.Dispose();
                 }
                 //PictureBox1に表示する
                 pictureBox1.Image = image;
@@ -207,6 +204,7 @@ namespace GetParameterCS
 
                 dgvFiles.Rows.RemoveAt(e.RowIndex);
                 pictureBox1.Visible = false;
+                lblCaption.Visible = true;
                 lblCaption.Text = "ファイルをドラッグ＆ドロップ";
 
                 dgvFiles.CurrentCellChanged += new EventHandler(DgvFiles_CurrentCellChanged);
@@ -235,7 +233,7 @@ namespace GetParameterCS
                         DataTable editTable = (DataTable)DgvRow.Cells["DgvDtSetID"].Value;
                         using (System.IO.StreamWriter sw = new System.IO.StreamWriter(stream))
                         {
-                            var clsRead = new ClsReadParameter(Image.FromFile(filePath), rectAngle, editTable);
+                            var clsRead = new ClsReadParameter(Image.FromFile(filePath), MD, MU, editTable);
                             var writeJson = new ClsWriteJson(clsRead.Duration, clsRead.Fps, clsRead.AllValCnt);
                             for (int i = 0; i < clsRead.Count(); i++)
                             {
@@ -280,17 +278,18 @@ namespace GetParameterCS
             SetID.Columns.Add("ID", Type.GetType("System.String"));
             SetID.Columns.Add("Min", Type.GetType("System.Int32"));
             SetID.Columns.Add("Max", Type.GetType("System.Int32"));
+            SetID.Columns.Add("Tolerance", Type.GetType("System.Double"));
 
             for (int j = 0;j < dataSetting.IDs.Count; j++)
             {
                 var dt = dataSetting.IDs[j];
                 if (dt.ID.Length != 0)
                 {
-                    SetID.Rows.Add(dt.ID, dt.Min, dt.Max);
+                    SetID.Rows.Add(dt.ID, dt.Min, dt.Max,dt.PerTolerance);
                 }
                 else
                 {
-                    SetID.Rows.Add("", 0, 0);
+                    SetID.Rows.Add("", 0, 0, 0.0);
                 }
             }
             return SetID;
@@ -328,13 +327,16 @@ namespace GetParameterCS
         {
             try
             {
-                if (pictureBox1.Visible == false) { pictureBox1.Visible = true; }
+                if (pictureBox1.Visible == false)
+                {
+                    pictureBox1.Visible = true;
+                }
+                lblCaption.Visible = false;
                 image = Image.FromFile(gif);
                 bmp = new Bitmap(image.Width, image.Height);
                 using (Graphics g = Graphics.FromImage(bmp))
                 {
                     g.DrawImage(image, new Point(0, 0));
-                    g.Dispose();
                 }
 
                 // 既に短形指定済みなら
@@ -443,7 +445,6 @@ namespace GetParameterCS
         {
             return Math.Abs(start - end);
         }
-
         private void DrawRegion(Point start, Point end)
         {
             Pen blackPen = new Pen(Color.Red);
@@ -481,9 +482,9 @@ namespace GetParameterCS
                 {
                     new IDSetting("ParamAngleX", -30, 30),
                     new IDSetting("ParamAngleY", -30, 30),
-                    new IDSetting("ParamAngleZ", -30, 30),
-                    new IDSetting("ParamBodyAngleX", -10, 10),
-                    new IDSetting("ParamBodyAngleZ", -10, 10),
+                    new IDSetting("ParamAngleZ", -30, 30, 0.06),
+                    new IDSetting("ParamBodyAngleX", -10, 10, 0.06),
+                    new IDSetting("ParamBodyAngleZ", -10, 10, 0.06),
                     new IDSetting("ParamBreath", 0, 1),
                     new IDSetting("ParamEyeLOpen", 0, 1),
                     new IDSetting("ParamEyeROpen", 0, 1),
@@ -525,7 +526,15 @@ namespace GetParameterCS
 
                     new IDSetting("ParamT", 0, 1),
                     new IDSetting("ParamY", 0, 1),
-                    new IDSetting("ParamTongue", 0, 1)
+                    new IDSetting("ParamTongue", 0, 1),
+                    new IDSetting("",0,0),
+                    new IDSetting("",0,0),
+
+                    new IDSetting("",0,0),
+                    new IDSetting("",0,0),
+                    new IDSetting("",0,0),
+                    new IDSetting("",0,0),
+                    new IDSetting("",0,0)
                 };
 
                 return iDSettings;
