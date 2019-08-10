@@ -305,7 +305,7 @@ namespace GetParameterCS
             dgvFiles.Rows.Add();
             var newRow = dgvFiles.Rows[dgvFiles.RowCount - 1];
             newRow.Cells["DgvFileName"].Value = Path.GetFileName(fileName);
-            newRow.Cells["DgvStatus"].Value = "座標未指定";
+            newRow.Cells["DgvStatus"].Value = "専用モデルを選択してください";
             newRow.Cells["DgvBtnSave"].Value = "保存";
             newRow.Cells["DgvBtnSetID"].Value = "編集";
             newRow.Cells["DgvBtnDel"].Value = "×";

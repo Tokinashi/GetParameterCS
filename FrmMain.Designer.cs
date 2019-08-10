@@ -266,7 +266,7 @@
             this.ClientSize = new System.Drawing.Size(985, 572);
             this.Controls.Add(this.splitContainer1);
             this.Name = "FrmMain";
-            this.Text = "モーションファイル作成するやつ";
+            this.Text = "Moli    -Motion log interface-";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FrmMain_FormClosed);
             this.Load += new System.EventHandler(this.FrmMain_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.FrmMain_DragDrop);
