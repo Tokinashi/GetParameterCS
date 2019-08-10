@@ -34,8 +34,12 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.dgvFiles = new System.Windows.Forms.DataGridView();
+            this.lblCaption = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.DgvFileName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DgvStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DgvFps = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DgvBtnSave = new System.Windows.Forms.DataGridViewButtonColumn();
             this.DgvBtnSetID = new System.Windows.Forms.DataGridViewButtonColumn();
             this.DgvBtnDel = new System.Windows.Forms.DataGridViewButtonColumn();
@@ -44,9 +48,6 @@
             this.DgvPoints = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.StartPoint = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.EndPoint = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lblCaption = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -97,6 +98,7 @@
             this.dgvFiles.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.DgvFileName,
             this.DgvStatus,
+            this.DgvFps,
             this.DgvBtnSave,
             this.DgvBtnSetID,
             this.DgvBtnDel,
@@ -114,9 +116,9 @@
             dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvFiles.DefaultCellStyle = dataGridViewCellStyle4;
             this.dgvFiles.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvFiles.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.dgvFiles.Location = new System.Drawing.Point(0, 0);
             this.dgvFiles.Name = "dgvFiles";
-            this.dgvFiles.ReadOnly = true;
             this.dgvFiles.RowHeadersVisible = false;
             this.dgvFiles.RowHeadersWidth = 62;
             this.dgvFiles.RowTemplate.Height = 27;
@@ -124,6 +126,30 @@
             this.dgvFiles.TabIndex = 0;
             this.dgvFiles.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellContentClick);
             this.dgvFiles.CurrentCellChanged += new System.EventHandler(this.DgvFiles_CurrentCellChanged);
+            // 
+            // lblCaption
+            // 
+            this.lblCaption.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblCaption.Font = new System.Drawing.Font("游ゴシック Medium", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.lblCaption.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.lblCaption.Location = new System.Drawing.Point(0, 0);
+            this.lblCaption.Name = "lblCaption";
+            this.lblCaption.Size = new System.Drawing.Size(985, 488);
+            this.lblCaption.TabIndex = 1;
+            this.lblCaption.Text = "gifファイルをドラッグ＆ドロップ";
+            this.lblCaption.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(10, 10);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseDown);
+            this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseMove);
+            this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseUp);
             // 
             // DgvFileName
             // 
@@ -145,6 +171,15 @@
             this.DgvStatus.ReadOnly = true;
             this.DgvStatus.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.DgvStatus.Width = 83;
+            // 
+            // DgvFps
+            // 
+            this.DgvFps.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.DgvFps.HeaderText = "FPS";
+            this.DgvFps.MinimumWidth = 8;
+            this.DgvFps.Name = "DgvFps";
+            this.DgvFps.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.DgvFps.Width = 46;
             // 
             // DgvBtnSave
             // 
@@ -193,7 +228,6 @@
             this.DgvDTSetID.HeaderText = "DtSetID";
             this.DgvDTSetID.MinimumWidth = 8;
             this.DgvDTSetID.Name = "DgvDTSetID";
-            this.DgvDTSetID.ReadOnly = true;
             this.DgvDTSetID.Visible = false;
             this.DgvDTSetID.Width = 150;
             // 
@@ -202,7 +236,6 @@
             this.DgvFilePath.HeaderText = "ファイルパス";
             this.DgvFilePath.MinimumWidth = 8;
             this.DgvFilePath.Name = "DgvFilePath";
-            this.DgvFilePath.ReadOnly = true;
             this.DgvFilePath.Visible = false;
             this.DgvFilePath.Width = 150;
             // 
@@ -211,7 +244,6 @@
             this.DgvPoints.HeaderText = "短形選択";
             this.DgvPoints.MinimumWidth = 8;
             this.DgvPoints.Name = "DgvPoints";
-            this.DgvPoints.ReadOnly = true;
             this.DgvPoints.Visible = false;
             this.DgvPoints.Width = 150;
             // 
@@ -220,7 +252,6 @@
             this.StartPoint.HeaderText = "StartPoint";
             this.StartPoint.MinimumWidth = 8;
             this.StartPoint.Name = "StartPoint";
-            this.StartPoint.ReadOnly = true;
             this.StartPoint.Visible = false;
             this.StartPoint.Width = 150;
             // 
@@ -229,33 +260,8 @@
             this.EndPoint.HeaderText = "EndPoint";
             this.EndPoint.MinimumWidth = 8;
             this.EndPoint.Name = "EndPoint";
-            this.EndPoint.ReadOnly = true;
             this.EndPoint.Visible = false;
             this.EndPoint.Width = 150;
-            // 
-            // lblCaption
-            // 
-            this.lblCaption.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblCaption.Font = new System.Drawing.Font("游ゴシック Medium", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.lblCaption.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.lblCaption.Location = new System.Drawing.Point(0, 0);
-            this.lblCaption.Name = "lblCaption";
-            this.lblCaption.Size = new System.Drawing.Size(985, 488);
-            this.lblCaption.TabIndex = 1;
-            this.lblCaption.Text = "gifファイルをドラッグ＆ドロップ";
-            this.lblCaption.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(10, 10);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseDown);
-            this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseMove);
-            this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseUp);
             // 
             // FrmMain
             // 
@@ -287,8 +293,10 @@
         private System.Windows.Forms.DataGridView dgvFiles;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label lblCaption;
         private System.Windows.Forms.DataGridViewTextBoxColumn DgvFileName;
         private System.Windows.Forms.DataGridViewTextBoxColumn DgvStatus;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DgvFps;
         private System.Windows.Forms.DataGridViewButtonColumn DgvBtnSave;
         private System.Windows.Forms.DataGridViewButtonColumn DgvBtnSetID;
         private System.Windows.Forms.DataGridViewButtonColumn DgvBtnDel;
@@ -297,7 +305,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn DgvPoints;
         private System.Windows.Forms.DataGridViewTextBoxColumn StartPoint;
         private System.Windows.Forms.DataGridViewTextBoxColumn EndPoint;
-        private System.Windows.Forms.Label lblCaption;
     }
 }
 

@@ -188,6 +188,7 @@ namespace GetParameterCS
 
         private void DataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            dgvFiles.EndEdit();
             // ヘッダー行の場合何もしない
             if (e.RowIndex < 0)
             {
@@ -195,7 +196,15 @@ namespace GetParameterCS
             }
 
             var DgvRow = dgvFiles.Rows[e.RowIndex];
-            // カレントセル変更が発生するのでハンドラを削除しておく
+            // Fpsがおかしい場合も何もしない
+            double Fps;
+            if (!double.TryParse(DgvRow.Cells["DgvFps"].Value.ToString(), out Fps))
+            {
+                MessageBox.Show("Fpsの値が不適切です。数字を入力してください");
+                return;
+            }
+
+
 
             // 削除　画像も消す。
             if (dgvFiles.Columns[e.ColumnIndex].Name == "DgvBtnDel")
@@ -213,12 +222,14 @@ namespace GetParameterCS
             // セーブ箇所設定（ファイル出力）ボタン
             else if (dgvFiles.Columns[e.ColumnIndex].Name == "DgvBtnSave")
             {
+
                 string filePath = DgvRow.Cells["DgvFilePath"].Value.ToString();
                 string rectAngle = DgvRow.Cells["DgvPoints"].Value.ToString();
                 if (rectAngle == "") { return; }
 
                 var MD = (Point)DgvRow.Cells["StartPoint"].Value;
                 var MU = (Point)DgvRow.Cells["EndPoint"].Value;
+                
 
                 saveFileDialog1.FileName = Path.GetFileNameWithoutExtension(filePath);
                 saveFileDialog1.InitialDirectory = dataSetting.OutputDir;
@@ -233,8 +244,8 @@ namespace GetParameterCS
                         DataTable editTable = (DataTable)DgvRow.Cells["DgvDtSetID"].Value;
                         using (System.IO.StreamWriter sw = new System.IO.StreamWriter(stream))
                         {
-                            var clsRead = new ClsReadParameter(Image.FromFile(filePath), MD, MU, editTable);
-                            var writeJson = new ClsWriteJson(clsRead.Duration, clsRead.Fps, clsRead.AllValCnt);
+                            var clsRead = new ClsReadParameter(Image.FromFile(filePath), MD, MU, editTable, Fps);
+                            var writeJson = new ClsWriteJson(clsRead.Duration, Fps, clsRead.AllValCnt);
                             for (int i = 0; i < clsRead.Count(); i++)
                             {
                                 if (clsRead.Ids(i) != "")
@@ -306,6 +317,7 @@ namespace GetParameterCS
             var newRow = dgvFiles.Rows[dgvFiles.RowCount - 1];
             newRow.Cells["DgvFileName"].Value = Path.GetFileName(fileName);
             newRow.Cells["DgvStatus"].Value = "専用モデルを選択してください";
+            newRow.Cells["DgvFps"].Value = 30.0;
             newRow.Cells["DgvBtnSave"].Value = "保存";
             newRow.Cells["DgvBtnSetID"].Value = "編集";
             newRow.Cells["DgvBtnDel"].Value = "×";
@@ -327,11 +339,9 @@ namespace GetParameterCS
         {
             try
             {
-                if (pictureBox1.Visible == false)
-                {
-                    pictureBox1.Visible = true;
-                }
+                pictureBox1.Visible = true;
                 lblCaption.Visible = false;
+
                 image = Image.FromFile(gif);
                 bmp = new Bitmap(image.Width, image.Height);
                 using (Graphics g = Graphics.FromImage(bmp))
@@ -375,7 +385,6 @@ namespace GetParameterCS
             MD.X = e.X;
             MD.Y = e.Y;
         }
-
         private void PictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
             Point start = new Point();
@@ -407,7 +416,6 @@ namespace GetParameterCS
             dgvFiles.Rows[showRow].Cells["EndPoint"].Value = MU;
 
         }
-
         private void PictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
             Point p = new Point();
@@ -447,7 +455,7 @@ namespace GetParameterCS
         }
         private void DrawRegion(Point start, Point end)
         {
-            Pen blackPen = new Pen(Color.Red);
+            Pen blackPen = new Pen(Color.Red,3);
             
             Graphics g = Graphics.FromImage(bmp);
 
@@ -464,6 +472,7 @@ namespace GetParameterCS
             g.Dispose();
         }
 
+        // 別の行をクリックされたらgif画像を切り替える
         private void DgvFiles_CurrentCellChanged(object sender, EventArgs e)
         {
             if (dgvFiles.CurrentCell != null & dgvFiles.CurrentRow.Index >= 0)
@@ -473,7 +482,7 @@ namespace GetParameterCS
             }
         }
 
-
+        // 埋め込み Live2d Cubism 3 公式パラメータ準拠
         public List<IDSetting> DefaultIDSetting
         {
             get
