@@ -17,11 +17,6 @@ namespace GetParameterCS
         public double Duration { get; set; }
         public long AllValCnt { get; set; }
         private readonly List<Idproperty> Idprop;
-        //private Image image;
-        //private Point mD;
-        //private Point mU;
-        //private string rectAngle;
-        //private DataTable editTable;
 
         /// <summary>
         /// 初期化
@@ -89,7 +84,7 @@ namespace GetParameterCS
                     }
                     Point point = new Point(MD.X + (col * sq) - (sq / 2), MD.Y + (row * sq) - (sq / 2));
 
-                    idProp.Add(new Idproperty(id, point, min, max,tol, new Dictionary<double, double>()));
+                    idProp.Add(new Idproperty(id, point, min, max,tol, new Dictionary<double, double>(),new List<double>()));
                     i++;
                     row++;
                 }
@@ -126,6 +121,7 @@ namespace GetParameterCS
                     double min = lstidproperty[idInd].min;
                     double max = lstidproperty[idInd].max;
                     double tol = lstidproperty[idInd].tolerance;
+                    List<double> lstParam = lstidproperty[idInd].Param;
 
                     // ここまでの取得パラメータ推移辞書
                     Dictionary<double, double> timevalue = lstidproperty[idInd].timeVal;
@@ -134,6 +130,9 @@ namespace GetParameterCS
                     Color gifColor = bitmap.GetPixel(idPoint.X, idPoint.Y);
                     // Black : 0 White : 1
                     double compareval = ChgVal(gifColor.GetBrightness(), min, max);
+
+                    // 20190815 すべてフレーム番号で撮るリスト
+                    lstParam.Add(compareval);
 
                     // 前フレームとの差異
                     //bool isTolerance = false;
@@ -197,6 +196,12 @@ namespace GetParameterCS
             public double max;
             public double tolerance;
             public Dictionary<double, double> timeVal;
+            public List<double> Param;
+
+            public Idproperty(string id, Point point, double min, double max, double tolerance, Dictionary<double, double> timeVal, List<double> param) : this(id, point, min, max, tolerance, timeVal)
+            {
+                Param = param;
+            }
 
             public Idproperty(string id, Point point, double min, double max, double tolerance,Dictionary<double, double> timeVal)
             {
