@@ -29,6 +29,8 @@ namespace GetParameterCS
             Fps = dblfps;
             Idprop = Setidproperties(editTable, MD, MU);
             SetVals(gif, Idprop);
+
+            //GetParamCSV(0);
         }
 
         /// <summary>
@@ -57,6 +59,27 @@ namespace GetParameterCS
         {
             return Idprop[i].id;
         }
+        /// <summary>
+        /// フレーム番号とパラメータのリスト
+        /// </summary>
+        /// <param name="i">ID番号</param>
+        /// <returns>パラメータリスト</returns>
+        public List<double> Param(int i)
+        {
+            return Idprop[i].Param;
+        }
+        public void GetParamCSV(int idnum)
+        {
+            using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "Param.csv"))
+            {
+                sw.Write(Idprop[idnum].id);
+                foreach (double str in Idprop[idnum].Param)
+                {
+                    sw.Write("," + str.ToString());
+                }
+            }
+        }
+
 
         private List<Idproperty> Setidproperties(DataTable editTable, Point MD, Point MU, int rowCnt = 10)
         {
@@ -132,7 +155,7 @@ namespace GetParameterCS
                     double compareval = ChgVal(gifColor.GetBrightness(), min, max);
 
                     // 20190815 すべてフレーム番号で撮るリスト
-                    lstParam.Add(compareval);
+                    lstParam.Add(gifColor.GetBrightness());
 
                     // 前フレームとの差異
                     //bool isTolerance = false;

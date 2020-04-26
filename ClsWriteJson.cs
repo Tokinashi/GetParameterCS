@@ -12,7 +12,7 @@ namespace GetParameterCS
         public ClsWriteJson(
                    double Duration ,
                    double Fps,
-                   long CurveCount ,
+                   int CurveCount ,
                    bool @loop  = true,
                    bool AreBeziersRestricted  = true,
                    int UserDataCount  = 0,
@@ -22,17 +22,17 @@ namespace GetParameterCS
             {
                 Curves = new List<CurvePoint>(),
                 Meta = new Dictionary<string, object>
-            {
-                { "Duration", Calc(Duration) },
-                { "Fps", Fps },
-                { "Loop", @loop },
-                { "AreBeziersRestricted", AreBeziersRestricted },
-                { "CurveCount", CurveCount },
-                { "TotalSegmentCount", 0 },
-                { "TotalPointCount", 0 },
-                { "UserDataCount", UserDataCount },
-                { "TotalUserDataSize", TotalUserDataSize }
-            }
+                {
+                    { "Duration", Calc(Duration) },
+                    { "Fps", Fps },
+                    { "Loop", @loop },
+                    { "AreBeziersRestricted", AreBeziersRestricted },
+                    { "CurveCount", CurveCount },
+                    { "TotalSegmentCount", 0 },
+                    { "TotalPointCount", 0 },
+                    { "UserDataCount", UserDataCount },
+                    { "TotalUserDataSize", TotalUserDataSize }
+                }
             };
         }
         

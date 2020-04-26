@@ -15,6 +15,7 @@ namespace GetParameterCS
         //プロパティ
         public DataTable EditTable { get; set; }
         public string GifName { get; set; }
+        public DataSetting dataSetting { get; set; }
         private DataTable firstTB { get; set; }
 
         private readonly DataGridViewCellStyle HeaderStyle = new DataGridViewCellStyle();
@@ -249,6 +250,20 @@ namespace GetParameterCS
                 DgvEdit.CurrentCell = null;
                 DgvEdit.ClearSelection();
                 DgvEdit.CurrentCellChanged += new EventHandler(DgvEdit_CurrentCellChanged);
+            }
+        }
+
+        private void BtnSetDefault_Click(object sender, EventArgs e)
+        {
+            for (int j = 0; j < dataSetting.IDs.Count; j++)
+            {
+                DataRow dtrow = EditTable.Rows[j];
+                var dt = dataSetting.IDs[j];
+
+                dt.ID = (string)dtrow["ID"];
+                dt.Min = (int)dtrow["Min"];
+                dt.Max = (int)dtrow["Max"];
+                dt.PerTolerance = (double)dtrow["Tolerance"];
             }
         }
     }

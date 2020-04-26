@@ -51,6 +51,7 @@ namespace GetParameterCS
             }
             else
             {
+                // フォーム設定ファイルがなければ現在の状態で作成
                 dataSetting = new DataSetting()
                 {
                     WindowHeight = Height,
@@ -59,7 +60,7 @@ namespace GetParameterCS
                     OutputDir = ExePath,
                     IDs = DefaultIDSetting
                 };
-                // インデント、改行をつけて出力
+                // 設定ファイルをインデント、改行をつけて出力
                 var settings = new JsonSerializerSettings
                 {
                     ContractResolver = new CamelCasePropertyNamesContractResolver(),
@@ -155,39 +156,12 @@ namespace GetParameterCS
             }
             Application.DoEvents();
         }
-
-        private void FrmMain_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                e.Effect = DragDropEffects.All;
-            }
-            else
-            {
-                e.Effect = DragDropEffects.None;
-            }
-        }
-
-        private void FrmMain_DragDrop(object sender, DragEventArgs e)
-        {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-            for (int i = 0; i < files.Length; i++)
-            {
-                string fileName = files[i];
-                if (Path.GetExtension(fileName) == ".gif")
-                {
-                    AdddgvRow(fileName);
-                    lblCaption.Text = "ファイルをドラッグ＆ドロップ";
-                }
-                else
-                {
-                    lblCaption.Text = "gif以外が含まれていました";
-                }
-            }
-        }
-
+        /// <summary>
+        /// データグリッドビュー内クリック処理
+        /// </summary>
         private void DataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            // 編集状態を固定する
             dgvFiles.EndEdit();
             // ヘッダー行の場合何もしない
             if (e.RowIndex < 0)
@@ -233,31 +207,37 @@ namespace GetParameterCS
 
                 saveFileDialog1.FileName = Path.GetFileNameWithoutExtension(filePath);
                 saveFileDialog1.InitialDirectory = dataSetting.OutputDir;
+                
+                // 動画を読み込み処理
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
                     // 選択されたフォルダを記録
                     dataSetting.OutputDir = Path.GetDirectoryName(saveFileDialog1.FileName);
 
                     Stream stream = saveFileDialog1.OpenFile();
-                    if (stream != null)
+                    if (stream == null) return;
+                    DataTable editTable = (DataTable)DgvRow.Cells["DgvDtSetID"].Value;
+
+
+                    using (StreamWriter sw = new StreamWriter(stream))
                     {
-                        DataTable editTable = (DataTable)DgvRow.Cells["DgvDtSetID"].Value;
-                        using (System.IO.StreamWriter sw = new System.IO.StreamWriter(stream))
+                        // gifの指定された位置の輝度を読み込み
+                        var clsRead = new ClsReadParameter(Image.FromFile(filePath), MD, MU, editTable, Fps);
+                        // データをjsonファイル用に変換
+                        var writeJson = new ClsWriteJson(clsRead.Duration, Fps, clsRead.Count());
+                        for (int i = 0; i < clsRead.Count(); i++)
                         {
-                            var clsRead = new ClsReadParameter(Image.FromFile(filePath), MD, MU, editTable, Fps);
-                            var writeJson = new ClsWriteJson(clsRead.Duration, Fps, clsRead.AllValCnt);
-                            for (int i = 0; i < clsRead.Count(); i++)
-                            {
-                                if (clsRead.Ids(i) != "")
-                                {
-                                Dictionary<double, double> aVal = clsRead.DicTimeVal(i);
-                                writeJson.AddPoint(clsRead.Ids(i), aVal.Keys.ToList(), aVal.Values.ToList());
-                                }
-                            }
-                            writeJson.WriteJson(sw);
-                            Console.WriteLine("出力");
+                            if (clsRead.Ids(i) == "") continue;
+                            Dictionary<double, double> aVal = clsRead.DicTimeVal(i);
+                            List<double> Param = clsRead.Param(i);
+
+                            writeJson.AddPoint(clsRead.Ids(i), aVal.Keys.ToList(), aVal.Values.ToList());
                         }
+                        writeJson.WriteJson(sw);
+                        Console.WriteLine("出力");
                     }
+
+
                     DgvRow.Cells["DgvStatus"].Value = "変換・保存済み";
                     DgvRow.Cells["DgvStatus"].Style = compStyle;
                 }
@@ -271,8 +251,10 @@ namespace GetParameterCS
                 using (FormEditID editID = new FormEditID())
                 {
                     editID.EditTable = (DataTable)DgvRow.Cells["DgvDtSetID"].Value;
+                    editID.dataSetting = this.dataSetting;
                     editID.ShowDialog(this);
                     DgvRow.Cells["DgvDtSetID"].Value = editID.EditTable;
+                    this.dataSetting = editID.dataSetting;
                 }
                 // セットされた値で戻ってくる
             }
@@ -374,6 +356,36 @@ namespace GetParameterCS
                 throw;
             }
             return true;
+        }
+
+        private void FrmMain_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.All;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void FrmMain_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            for (int i = 0; i < files.Length; i++)
+            {
+                string fileName = files[i];
+                if (Path.GetExtension(fileName) == ".gif")
+                {
+                    AdddgvRow(fileName);
+                    lblCaption.Text = "ファイルをドラッグ＆ドロップ";
+                }
+                else
+                {
+                    lblCaption.Text = "gif以外が含まれていました";
+                }
+            }
         }
 
         private void PictureBox1_MouseDown(object sender, MouseEventArgs e)
