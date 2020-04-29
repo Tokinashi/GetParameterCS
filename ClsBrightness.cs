@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 
 // 動画と短形位置から50種の輝度のリストを作る
 namespace GetParameterCS
@@ -28,7 +29,25 @@ namespace GetParameterCS
             frames = new List<List<float>>();
         }
 
-        private void Read(Image gif)
+        public List<List<float>> Read()
+        {
+            switch (Path.GetExtension(moviepath))
+            {
+                case ".gif":
+                    return Read(Image.FromFile(moviepath));
+            // その他webm・mp4なら
+                case ".webm": 
+                case ".mp4":
+
+                    break;
+                // ない場合はエラー
+                default:
+                    break;
+            }
+            return null;
+        }
+
+        public List<List<float>> Read(Image gif)
         {
             // フレーム数取得
             FrameDimension fd = new FrameDimension(gif.FrameDimensionsList[0]);
@@ -44,6 +63,7 @@ namespace GetParameterCS
                 var monochromes = ReadAllParam(bitmap, idaddr);
                 frames.Add(monochromes);
             }
+            return frames;
         }
 
         /// <summary>
@@ -61,7 +81,7 @@ namespace GetParameterCS
                 // パラメータを取得
                 Color gifColor = bitmap.GetPixel(points[i].X, points[i].Y);
                 // Black : 0 White : 1
-                float compareval = 1 - gifColor.GetBrightness();
+                float compareval = gifColor.GetBrightness();
 
                 // 20190815 すべてフレーム番号で撮るリスト
                 monochromes.Add(compareval);

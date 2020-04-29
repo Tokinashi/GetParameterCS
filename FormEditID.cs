@@ -15,8 +15,8 @@ namespace GetParameterCS
         //プロパティ
         public DataTable EditTable { get; set; }
         public string GifName { get; set; }
-        public DataSetting dataSetting { get; set; }
-        private DataTable firstTB { get; set; }
+        public DataSetting DataSetting { get; set; }
+        private DataTable FirstTB { get; set; }
 
         private readonly DataGridViewCellStyle HeaderStyle = new DataGridViewCellStyle();
         private readonly DataGridViewCellStyle NumStyle = new DataGridViewCellStyle();
@@ -40,7 +40,7 @@ namespace GetParameterCS
             DgvEdit.AllowUserToDeleteRows = false;
             DgvEdit.AllowDrop = false;
 
-            firstTB = EditTable.Copy();
+            FirstTB = EditTable.Copy();
 
             // 番号列
             DataGridViewTextBoxColumn numColumn = new DataGridViewTextBoxColumn
@@ -120,7 +120,7 @@ namespace GetParameterCS
                     MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
-                    ResetDT(firstTB);
+                    ResetDT(FirstTB);
                     DgvEdit.CurrentCell = DgvEdit[0, 0];
                 }
                 
@@ -255,10 +255,10 @@ namespace GetParameterCS
 
         private void BtnSetDefault_Click(object sender, EventArgs e)
         {
-            for (int j = 0; j < dataSetting.IDs.Count; j++)
+            for (int j = 0; j < DataSetting.IDs.Count; j++)
             {
                 DataRow dtrow = EditTable.Rows[j];
-                var dt = dataSetting.IDs[j];
+                var dt = DataSetting.IDs[j];
 
                 dt.ID = (string)dtrow["ID"];
                 dt.Min = (int)dtrow["Min"];

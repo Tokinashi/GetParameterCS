@@ -169,8 +169,7 @@ namespace GetParameterCS
 
             var DgvRow = dgvFiles.Rows[e.RowIndex];
             // Fpsがおかしい場合も何もしない
-            double Fps;
-            if (!double.TryParse(DgvRow.Cells["DgvFps"].Value.ToString(), out Fps))
+            if (!float.TryParse(DgvRow.Cells["DgvFps"].Value.ToString(), out float Fps))
             {
                 MessageBox.Show("Fpsの値が不適切です。数字を入力してください");
                 return;
@@ -199,8 +198,8 @@ namespace GetParameterCS
                 string rectAngle = DgvRow.Cells["DgvPoints"].Value.ToString();
                 if (rectAngle == "") { return; }
 
-                var MD = (Point)DgvRow.Cells["StartPoint"].Value;
-                var MU = (Point)DgvRow.Cells["EndPoint"].Value;
+                MD = (Point)DgvRow.Cells["StartPoint"].Value;
+                MU = (Point)DgvRow.Cells["EndPoint"].Value;
                 
 
                 saveFileDialog1.FileName = Path.GetFileNameWithoutExtension(filePath);
@@ -217,21 +216,29 @@ namespace GetParameterCS
                     DataTable editTable = (DataTable)DgvRow.Cells["DgvDtSetID"].Value;
 
 
+                    // 輝度の値だけ取得
+                    ClsBrightness brightness = new ClsBrightness(filePath, MD, MU);
+                    var frames = brightness.Read();
+                    brightness = null;
+#if DEBUG
+                    Writefloatcsv(frames, ExePath + "\\brightframes.csv");
+#endif
+                    // パラメータを変換
+                    ConvBrighttoLive2D conv = new ConvBrighttoLive2D(editTable);
+                    frames = conv.Comvert(frames);
+                    conv = null;
+#if DEBUG
+                    Writefloatcsv(frames, ExePath + "\\live2Dframe.csv");
+#endif
+                    // 情報をLive2Dモーションクラスに展開
+                    ClsLive2DMotion clsLive2D = new ClsLive2DMotion(editTable, Fps);
+                    Motion3Json motion3Json = clsLive2D.GetMotions(frames);
+
+                    // シリアライズ出力
+                    string json = JsonConvert.SerializeObject(motion3Json, Formatting.Indented);
                     using (StreamWriter sw = new StreamWriter(stream))
                     {
-                        // gifの指定された位置の輝度を読み込み
-                        var clsRead = new ClsReadParameter(Image.FromFile(filePath), MD, MU, editTable, Fps);
-                        // データをjsonファイル用に変換
-                        var writeJson = new ClsWriteJson(clsRead.Duration, Fps, clsRead.Count());
-                        for (int i = 0; i < clsRead.Count(); i++)
-                        {
-                            if (clsRead.Ids(i) == "") continue;
-                            Dictionary<double, double> aVal = clsRead.DicTimeVal(i);
-                            List<double> Param = clsRead.Param(i);
-
-                            writeJson.AddPoint(clsRead.Ids(i), aVal.Keys.ToList(), aVal.Values.ToList());
-                        }
-                        writeJson.WriteJson(sw);
+                        sw.Write(json);
                         Console.WriteLine("出力");
                     }
 
@@ -249,10 +256,10 @@ namespace GetParameterCS
                 using (FormEditID editID = new FormEditID())
                 {
                     editID.EditTable = (DataTable)DgvRow.Cells["DgvDtSetID"].Value;
-                    editID.dataSetting = this.dataSetting;
+                    editID.DataSetting = this.dataSetting;
                     editID.ShowDialog(this);
                     DgvRow.Cells["DgvDtSetID"].Value = editID.EditTable;
-                    this.dataSetting = editID.dataSetting;
+                    this.dataSetting = editID.DataSetting;
                 }
                 // セットされた値で戻ってくる
             }
@@ -486,6 +493,26 @@ namespace GetParameterCS
             }
         }
 
+        #endregion
+
+        #region #デバッグ用"
+        private void Writefloatcsv(List<List<float>> data,string path)
+        {
+
+            using (StreamWriter sw = new StreamWriter(path))
+            {
+                foreach (var frame in data)
+                {
+                    string line = "";
+                    foreach (var param in frame)
+                    {
+                        if (line != "") line += ",";
+                        line += param;
+                    }
+                    sw.WriteLine(line);
+                }
+            }
+        }
         #endregion
 
         // 埋め込み Live2d Cubism 3 公式パラメータ準拠

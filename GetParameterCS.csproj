@@ -80,8 +80,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClsBrightness.cs" />
-    <Compile Include="ClsReadParameter.cs" />
-    <Compile Include="ClsWriteJson.cs" />
+    <Compile Include="ClsLive2DMotion.cs" />
+    <Compile Include="ConvBrighttoLive2D.cs" />
     <Compile Include="DataSetting.cs" />
     <Compile Include="FormEditID.cs">
       <SubType>Form</SubType>
