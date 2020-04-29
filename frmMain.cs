@@ -32,10 +32,11 @@ namespace GetParameterCS
 
         #endregion
 
+        #region "フォーム処理"
         public FrmMain()
         {
-            ExePath = AppDomain.CurrentDomain.BaseDirectory;
             InitializeComponent();
+            ExePath = AppDomain.CurrentDomain.BaseDirectory;
             view = false;
             // スタイルの設定
             compStyle.BackColor = Color.Yellow;
@@ -49,9 +50,9 @@ namespace GetParameterCS
 
                 }
             }
+            // フォーム設定ファイルがなければ現在の状態で作成
             else
             {
-                // フォーム設定ファイルがなければ現在の状態で作成
                 dataSetting = new DataSetting()
                 {
                     WindowHeight = Height,
@@ -118,44 +119,41 @@ namespace GetParameterCS
 
         }
 
-        private void Pointtest(string rectangle,int rowCnt = 10)
+        #endregion
+
+        #region "ドラッグドロップ"
+
+        private void FrmMain_DragEnter(object sender, DragEventArgs e)
         {
-
-            string[] rect = rectangle.Split(',');
-            Point MD = new Point(int.Parse(rect[0]), int.Parse(rect[1]));
-            Point MU = new Point(int.Parse(rect[2]), int.Parse(rect[3]));
-            int mHeight = Math.Abs(MD.Y - MU.Y);
-            int sq = mHeight / rowCnt;
-
-            int i = 0;
-            int row = 1;
-            int col = 1;
-            for (int j = 1; j <= Properties.Settings.Default.Properties.Count; j++)
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                if (row == 11)
-                {
-                    row = 1;
-                    col++;
-                }
-                Point point = new Point(MD.X + (col * sq) - (sq / 2), MD.Y + (row * sq) - (sq / 2));
-
-                using (Graphics g = Graphics.FromImage(image))
-                {
-                    //Penオブジェクトの作成(幅3黒色)
-                    Pen p = new Pen(Color.Red, 1);
-                    //(10, 20)-(100, 200)に線を引く
-                    g.DrawLine(p, point.X - 5, point.Y - 5, point.X + 5, point.Y + 5);
-                    g.DrawLine(p, point.X + 5, point.Y - 5, point.X - 5, point.Y + 5);
-
-                }
-                //PictureBox1に表示する
-                pictureBox1.Image = image;
-
-                i++;
-                row++;
+                e.Effect = DragDropEffects.All;
             }
-            Application.DoEvents();
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
         }
+
+        private void FrmMain_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            for (int i = 0; i < files.Length; i++)
+            {
+                string fileName = files[i];
+                if (Path.GetExtension(fileName) == ".gif")
+                {
+                    AdddgvRow(fileName);
+                    lblCaption.Text = "ファイルをドラッグ＆ドロップ";
+                }
+                else
+                {
+                    lblCaption.Text = "gif以外が含まれていました";
+                }
+            }
+        }
+        #endregion
+
         /// <summary>
         /// データグリッドビュー内クリック処理
         /// </summary>
@@ -264,6 +262,16 @@ namespace GetParameterCS
             }
         }
 
+        // 別の行をクリックされたらgif画像を切り替える
+        private void DgvFiles_CurrentCellChanged(object sender, EventArgs e)
+        {
+            if (dgvFiles.CurrentCell != null & dgvFiles.CurrentRow.Index >= 0)
+            {
+                string fileName = dgvFiles.CurrentRow.Cells["DgvFilePath"].Value.ToString();
+                ShowGif(fileName, dgvFiles.CurrentRow.Index);
+            }
+        }
+
         private DataTable NewSetID()
         {
             var SetID = new DataTable();
@@ -317,76 +325,7 @@ namespace GetParameterCS
             dgvFiles.CurrentCellChanged += new EventHandler(DgvFiles_CurrentCellChanged);
         }
 
-        private bool ShowGif(string gif, int row = 1)
-        {
-            try
-            {
-                pictureBox1.Visible = true;
-                lblCaption.Visible = false;
-
-                image = Image.FromFile(gif);
-                bmp = new Bitmap(image.Width, image.Height);
-                using (Graphics g = Graphics.FromImage(bmp))
-                {
-                    g.DrawImage(image, new Point(0, 0));
-                }
-
-                // 既に短形指定済みなら
-                if (dgvFiles.Rows[row].Cells["StartPoint"].Value.ToString() != "")
-                {
-                    Point start = (Point)dgvFiles.Rows[row].Cells["StartPoint"].Value;
-                    Point end = (Point)dgvFiles.Rows[row].Cells["EndPoint"].Value;
-
-                    // 領域を描画
-                    DrawRegion(start, end);
-
-                    //PictureBox1に表示する
-                    pictureBox1.Image = bmp;
-                }
-
-                pictureBox1.Image = bmp;
-                showRow = row;
-                lblCaption.Text = dgvFiles.Rows[row].Cells["DgvFileName"].Value.ToString();
-                
-                //bmp = new Bitmap(image.Width, image.Height);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.ToString());
-                throw;
-            }
-            return true;
-        }
-
-        private void FrmMain_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                e.Effect = DragDropEffects.All;
-            }
-            else
-            {
-                e.Effect = DragDropEffects.None;
-            }
-        }
-
-        private void FrmMain_DragDrop(object sender, DragEventArgs e)
-        {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-            for (int i = 0; i < files.Length; i++)
-            {
-                string fileName = files[i];
-                if (Path.GetExtension(fileName) == ".gif")
-                {
-                    AdddgvRow(fileName);
-                    lblCaption.Text = "ファイルをドラッグ＆ドロップ";
-                }
-                else
-                {
-                    lblCaption.Text = "gif以外が含まれていました";
-                }
-            }
-        }
+        #region "短形選択"
 
         private void PictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
@@ -397,6 +336,7 @@ namespace GetParameterCS
             MD.X = e.X;
             MD.Y = e.Y;
         }
+
         private void PictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
             Point start = new Point();
@@ -428,6 +368,7 @@ namespace GetParameterCS
             dgvFiles.Rows[showRow].Cells["EndPoint"].Value = MU;
 
         }
+
         private void PictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
             Point p = new Point();
@@ -453,6 +394,53 @@ namespace GetParameterCS
             //PictureBox1に表示する
             pictureBox1.Image = bmp;
         }
+
+        #endregion
+
+        #region "描画"
+
+        private bool ShowGif(string gif, int row = 1)
+        {
+            try
+            {
+                pictureBox1.Visible = true;
+                lblCaption.Visible = false;
+
+                image = Image.FromFile(gif);
+                bmp = new Bitmap(image.Width, image.Height);
+                using (Graphics g = Graphics.FromImage(bmp))
+                {
+                    g.DrawImage(image, new Point(0, 0));
+                }
+
+                // 既に短形指定済みなら
+                if (dgvFiles.Rows[row].Cells["StartPoint"].Value.ToString() != "")
+                {
+                    Point start = (Point)dgvFiles.Rows[row].Cells["StartPoint"].Value;
+                    Point end = (Point)dgvFiles.Rows[row].Cells["EndPoint"].Value;
+
+                    // 領域を描画
+                    DrawRegion(start, end);
+
+
+                    //PictureBox1に表示する
+                    pictureBox1.Image = bmp;
+                }
+
+                pictureBox1.Image = bmp;
+                showRow = row;
+                lblCaption.Text = dgvFiles.Rows[row].Cells["DgvFileName"].Value.ToString();
+                
+                //bmp = new Bitmap(image.Width, image.Height);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+                throw;
+            }
+            return true;
+        }
+
         private void GetRegion(Point p1, Point p2, ref Point start, ref Point end)
         {
             start.X = Math.Min(p1.X, p2.X);
@@ -461,38 +449,44 @@ namespace GetParameterCS
             end.X = Math.Max(p1.X, p2.X);
             end.Y = Math.Max(p1.Y, p2.Y);
         }
-        private int GetLength(int start, int end)
-        {
-            return Math.Abs(start - end);
-        }
+
         private void DrawRegion(Point start, Point end)
         {
-            Pen blackPen = new Pen(Color.Red,3);
-            
+            Pen blackPen = new Pen(Color.Black,1);
+            Pen RedPen = new Pen(Color.Red, 3);
+
             Graphics g = Graphics.FromImage(bmp);
 
             // 描画する線を点線に設定
-            blackPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+            RedPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
 
             // 画面を消去
             g.Clear(SystemColors.Control);
 
             // 領域を描画
             g.DrawImage(image, new Point(0,0));
-            g.DrawRectangle(blackPen, start.X, start.Y, GetLength(start.X, end.X), GetLength(start.Y, end.Y));
+            g.DrawRectangle(RedPen, start.X, start.Y, Math.Abs(start.X-end.X), Math.Abs(start.Y-end.Y));
+
+#if DEBUG
+            DrawPoints(g,start,end);
+#endif
 
             g.Dispose();
         }
 
-        // 別の行をクリックされたらgif画像を切り替える
-        private void DgvFiles_CurrentCellChanged(object sender, EventArgs e)
+        private void DrawPoints(Graphics g,Point start, Point end)
         {
-            if (dgvFiles.CurrentCell != null & dgvFiles.CurrentRow.Index >= 0)
+            Pen blackPen = new Pen(Color.Black, 1);
+            ClsBrightness brightness = new ClsBrightness("", start, end);
+            var points = brightness.Baddr();
+            foreach (var point in points)
             {
-                string fileName = dgvFiles.CurrentRow.Cells["DgvFilePath"].Value.ToString();
-                ShowGif(fileName, dgvFiles.CurrentRow.Index);
+                g.DrawLine(blackPen, point.X - 5, point.Y - 5, point.X + 5, point.Y + 5);
+                g.DrawLine(blackPen, point.X + 5, point.Y - 5, point.X - 5, point.Y + 5);
             }
         }
+
+        #endregion
 
         // 埋め込み Live2d Cubism 3 公式パラメータ準拠
         public List<IDSetting> DefaultIDSetting
