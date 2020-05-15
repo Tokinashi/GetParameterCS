@@ -144,11 +144,17 @@ namespace GetParameterCS
                 if (Path.GetExtension(fileName) == ".gif")
                 {
                     AdddgvRow(fileName);
-                    lblCaption.Text = "ファイルをドラッグ＆ドロップ";
+                    lblCaption.Text = "gif/webm/mp4をドラッグ＆ドロップ";
+                }
+                // 将来用
+                else if (Path.GetExtension(fileName) == ".webm" || Path.GetExtension(fileName) == ".mp4")
+                {
+                    AdddgvRow(fileName);
+                    lblCaption.Text = "gif/webm/mp4をドラッグ＆ドロップ";
                 }
                 else
                 {
-                    lblCaption.Text = "gif以外が含まれていました";
+                    lblCaption.Text = "gif,webm,mp4以外が含まれていました";
                 }
             }
         }
@@ -218,15 +224,13 @@ namespace GetParameterCS
 
                     // 輝度の値だけ取得
                     ClsBrightness brightness = new ClsBrightness(filePath, MD, MU);
-                    var frames = brightness.Read();
-                    brightness = null;
+                    List<List<float>> frames = brightness.Read();
 #if DEBUG
                     Writefloatcsv(frames, ExePath + "\\brightframes.csv");
 #endif
                     // パラメータを変換
                     ConvBrighttoLive2D conv = new ConvBrighttoLive2D(editTable);
                     frames = conv.Comvert(frames);
-                    conv = null;
 #if DEBUG
                     Writefloatcsv(frames, ExePath + "\\live2Dframe.csv");
 #endif
@@ -242,7 +246,7 @@ namespace GetParameterCS
                         Console.WriteLine("出力");
                     }
 
-
+                    MessageBox.Show("motion3.jsonを出力しました");
                     DgvRow.Cells["DgvStatus"].Value = "変換・保存済み";
                     DgvRow.Cells["DgvStatus"].Style = compStyle;
                 }
@@ -265,7 +269,7 @@ namespace GetParameterCS
             }
             else
             {
-                ShowGif(DgvRow.Cells["DgvFilePath"].Value.ToString(),e.RowIndex);
+                ShowSS(DgvRow.Cells["DgvFilePath"].Value.ToString(),e.RowIndex);
             }
         }
 
@@ -275,7 +279,7 @@ namespace GetParameterCS
             if (dgvFiles.CurrentCell != null & dgvFiles.CurrentRow.Index >= 0)
             {
                 string fileName = dgvFiles.CurrentRow.Cells["DgvFilePath"].Value.ToString();
-                ShowGif(fileName, dgvFiles.CurrentRow.Index);
+                ShowSS(fileName, dgvFiles.CurrentRow.Index);
             }
         }
 
@@ -328,7 +332,7 @@ namespace GetParameterCS
 
             DataTable table = (DataTable)dgvFiles.CurrentRow.Cells["DgvDtSetID"].Value;
             
-            ShowGif(fileName, dgvFiles.Rows.Count - 1);
+            ShowSS(fileName, dgvFiles.Rows.Count - 1);
             dgvFiles.CurrentCellChanged += new EventHandler(DgvFiles_CurrentCellChanged);
         }
 
@@ -406,19 +410,49 @@ namespace GetParameterCS
 
         #region "描画"
 
-        private bool ShowGif(string gif, int row = 1)
+        /// <summary>
+        /// 一フレーム目のスクリーンショットを表示
+        /// </summary>
+        /// <param name="mediapath"></param>
+        /// <param name="row"></param>
+        /// <returns></returns>
+        private bool ShowSS(string mediapath, int row = 1)
         {
             try
             {
                 pictureBox1.Visible = true;
                 lblCaption.Visible = false;
 
-                image = Image.FromFile(gif);
-                bmp = new Bitmap(image.Width, image.Height);
-                using (Graphics g = Graphics.FromImage(bmp))
+                switch (Path.GetExtension(mediapath))
                 {
-                    g.DrawImage(image, new Point(0, 0));
+                    case ".gif":
+                        if(image!=null)image.Dispose();
+                        if(bmp!=null)bmp.Dispose();
+                        image = Image.FromFile(mediapath);
+                        bmp = new Bitmap(image.Width, image.Height);
+                        using (Graphics g = Graphics.FromImage(bmp))
+                        {
+                            g.DrawImage(image, new Point(0, 0));
+                        }
+                        break;
+                    case ".mp4":
+                    case ".webm":
+                        using (var capture = new OpenCvSharp.VideoCapture(mediapath))
+                        {
+                            var img = new OpenCvSharp.Mat();
+                            capture.Read(img);
+
+                            if(image!=null)image.Dispose();
+                            if(bmp!=null)bmp.Dispose();
+                            image = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(img);
+                            bmp = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(img);
+                        }
+                        break;
+                    default:
+                        break;
                 }
+
+
 
                 // 既に短形指定済みなら
                 if (dgvFiles.Rows[row].Cells["StartPoint"].Value.ToString() != "")
@@ -583,5 +617,9 @@ namespace GetParameterCS
             }
         }
 
+        private void lblCaption_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

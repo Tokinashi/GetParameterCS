@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using OpenCvSharp.Extensions;
 
 // 動画と短形位置から50種の輝度のリストを作る
 namespace GetParameterCS
@@ -13,20 +14,15 @@ namespace GetParameterCS
     class ClsBrightness
     {
         private string moviepath;
-        private Image image;
 
         private Point MD;
         private Point MU;
-
-        public List<float> frame;
-        public List<List<float>> frames;
 
         public ClsBrightness(string moviepath, Point mD, Point mU)
         {
             this.moviepath = moviepath;
             MD = mD;
             MU = mU;
-            frames = new List<List<float>>();
         }
 
         public List<List<float>> Read()
@@ -38,8 +34,7 @@ namespace GetParameterCS
             // その他webm・mp4なら
                 case ".webm": 
                 case ".mp4":
-
-                    break;
+                    return Read(moviepath);
                 // ない場合はエラー
                 default:
                     break;
@@ -47,11 +42,43 @@ namespace GetParameterCS
             return null;
         }
 
+        private List<List<float>> Read(string videopath)
+        {
+            // 返すフレーム情報の準備
+            var frames = new List<List<float>>();
+            // パラメータを取得する位置を計算しリスト化
+            var idaddr = Baddr();
+            int frameCnt;
+            using (var capture = new OpenCvSharp.VideoCapture(videopath))
+            {
+                frameCnt = capture.FrameCount - 1;
+            }
+
+            // 読み込み
+            for (int frameInd = 0; frameInd < frameCnt; frameInd++)
+            {
+                var img = new OpenCvSharp.Mat();
+                using (OpenCvSharp.VideoCapture capture = new OpenCvSharp.VideoCapture(videopath))
+                {
+                    capture.Set(OpenCvSharp.VideoCaptureProperties.PosFrames, frameInd);
+                    capture.Read(img);
+                }
+                Bitmap bitmap = BitmapConverter.ToBitmap(img);
+                img.Dispose();
+                var monochromes = ReadAllParam(bitmap, idaddr);
+                bitmap.Dispose();
+                frames.Add(monochromes);
+            }
+            return frames;
+        }
+
         public List<List<float>> Read(Image gif)
         {
             // フレーム数取得
             FrameDimension fd = new FrameDimension(gif.FrameDimensionsList[0]);
             int frameCnt = gif.GetFrameCount(fd);
+            // 返すフレーム情報の準備
+            var frames = new List<List<float>>();
             // パラメータを取得する位置を計算しリスト化
             var idaddr = Baddr();
 

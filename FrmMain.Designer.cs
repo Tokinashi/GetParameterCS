@@ -34,9 +34,6 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.dgvFiles = new System.Windows.Forms.DataGridView();
-            this.lblCaption = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.DgvFileName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DgvStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DgvFps = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -48,6 +45,9 @@
             this.DgvPoints = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.StartPoint = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.EndPoint = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lblCaption = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -126,30 +126,6 @@
             this.dgvFiles.TabIndex = 0;
             this.dgvFiles.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellContentClick);
             this.dgvFiles.CurrentCellChanged += new System.EventHandler(this.DgvFiles_CurrentCellChanged);
-            // 
-            // lblCaption
-            // 
-            this.lblCaption.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblCaption.Font = new System.Drawing.Font("游ゴシック Medium", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.lblCaption.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.lblCaption.Location = new System.Drawing.Point(0, 0);
-            this.lblCaption.Name = "lblCaption";
-            this.lblCaption.Size = new System.Drawing.Size(985, 488);
-            this.lblCaption.TabIndex = 1;
-            this.lblCaption.Text = "gifファイルをドラッグ＆ドロップ";
-            this.lblCaption.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(10, 10);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseDown);
-            this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseMove);
-            this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseUp);
             // 
             // DgvFileName
             // 
@@ -262,6 +238,31 @@
             this.EndPoint.Name = "EndPoint";
             this.EndPoint.Visible = false;
             this.EndPoint.Width = 150;
+            // 
+            // lblCaption
+            // 
+            this.lblCaption.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblCaption.Font = new System.Drawing.Font("游ゴシック Medium", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.lblCaption.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.lblCaption.Location = new System.Drawing.Point(0, 0);
+            this.lblCaption.Name = "lblCaption";
+            this.lblCaption.Size = new System.Drawing.Size(985, 488);
+            this.lblCaption.TabIndex = 1;
+            this.lblCaption.Text = "gif/webm/mp4ファイルをドラッグ＆ドロップ";
+            this.lblCaption.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblCaption.Click += new System.EventHandler(this.lblCaption_Click);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(10, 10);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseDown);
+            this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseMove);
+            this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseUp);
             // 
             // FrmMain
             // 
